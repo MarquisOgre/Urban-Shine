@@ -23,7 +23,7 @@ const MobileNav = () => {
     { to: "/invoice", label: "Invoice System", icon: FileText },
   ];
 
-  const menuItems = user ? [...protectedItems, ...publicItems] : publicItems;
+  const menuItems = user ? [...protectedItems, ...publicItems] : [];
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
