@@ -10,10 +10,10 @@ const StoreHeader = () => {
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <img src="/Logo.png" alt="UltraShine" className="h-9 w-auto object-contain" />
-          <span className="font-extrabold tracking-tight text-slate-900 text-lg sm:text-xl">
+          <img src="/Logo.png" alt="UltraShine" className="h-14 w-auto object-contain" />
+          {/* <span className="font-extrabold tracking-tight text-slate-900 text-lg sm:text-xl">
             Ultra<span className="text-blue-600">Shine</span>
-          </span>
+          </span> */}
         </Link>
 
         <nav className="flex items-center gap-4 sm:gap-6">

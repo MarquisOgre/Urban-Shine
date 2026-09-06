@@ -21,11 +21,11 @@ const Header = () => {
             <div className="bg-white rounded-full p-1.5 sm:p-3 flex items-center justify-center">
                 <img
                   src="/Logo.png"
-                  alt="Shine & Sparkle Logo"
-                  className="h-10 w-auto sm:h-14 object-contain"                />
+                  alt="Urban Shine Logo"
+                  className="h-16 w-auto sm:h-14 object-contain"                />
             </div>
             <div className="flex flex-col justify-center">
-              {/* <h1 className="text-lg sm:text-2xl font-bold">SHINE & SPARKLE</h1> */}
+              {/* <h1 className="text-lg sm:text-2xl font-bold">URBAN SHINE</h1> */}
             </div>
           </Link>
           {user ? (
