@@ -13,7 +13,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
     --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary-foreground: 210 40 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
@@ -71,9 +71,7 @@
   body { @apply bg-background text-foreground; }
 }
 
-/* Homepage reference match.
-   The hero uses the existing AI-generated photographic artwork already in public/hero-generated.jpg.
-   No user PNG/logo is used by this hero. The old inline SVG is hidden so it cannot distort the hero height. */
+/* Homepage reference match. The hero uses the existing AI-generated photographic artwork. */
 #home {
   height: 390px !important;
   min-height: 390px !important;
@@ -93,6 +91,25 @@
 
 #home > div:first-child > svg {
   display: none !important;
+}
+
+#home > div:first-child::after {
+  content: "Small steps\\A for a cleaner\\A tomorrow.";
+  white-space: pre;
+  position: absolute;
+  right: 3.5%;
+  top: 24px;
+  z-index: 1;
+  width: 145px;
+  color: #075b66;
+  font-family: cursive;
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.08;
+  font-style: italic;
+  transform: rotate(-5deg);
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255,255,255,.5);
 }
 
 #home > div:nth-child(2) {
@@ -132,6 +149,12 @@
     height: 100% !important;
     min-height: 540px !important;
     background-position: 68% center !important;
+  }
+
+  #home > div:first-child::after {
+    right: 4%;
+    top: 22px;
+    font-size: 20px;
   }
 
   #home > div:nth-child(2) {
