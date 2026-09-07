@@ -13,10 +13,26 @@ const InvoicePrint = ({ invoice, onClose }: InvoicePrintProps) => {
       window.print();
     };
 
+    // Set the browser document title so the Print / Save as PDF dialog
+    // uses the requested filename by default.
+    const originalTitle = document.title;
+    const year = new Date(invoice.invoice_date || new Date()).getFullYear();
+    const invoiceNumber = invoice.invoice_number || "INV-001";
+    const sequenceMatch = invoiceNumber.match(/(?:^|-)INV-(\d+)$/i);
+    const sequence = sequenceMatch ? sequenceMatch[1].padStart(3, "0") : "001";
+    const generatedDate = new Date(invoice.invoice_date || new Date());
+    const pad = (value: number) => String(value).padStart(2, "0");
+    const generatedDateText = `${generatedDate.getFullYear()}-${pad(generatedDate.getMonth() + 1)}-${pad(generatedDate.getDate())}`;
+
+    document.title = `UrbanShine-${year}-Inv-${sequence}-InvoiceGenerated-${generatedDateText}`;
+
     // Auto print after a brief delay
     const timer = setTimeout(handlePrint, 500);
-    return () => clearTimeout(timer);
-  }, []);
+    return () => {
+      clearTimeout(timer);
+      document.title = originalTitle;
+    };
+  }, [invoice]);
 
   return (
     <div className="min-h-screen bg-white">
