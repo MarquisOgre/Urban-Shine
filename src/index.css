@@ -43,7 +43,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
     --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary-foreground: 222.2 84% 4.9%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
@@ -71,10 +71,79 @@
   body { @apply bg-background text-foreground; }
 }
 
-/* Reliable hero artwork: the generated JPG is retained, but this vector scene is used so the hero can never render as an empty panel. */
+/* Homepage reference match.
+   The hero uses the existing AI-generated photographic artwork already in public/hero-generated.jpg.
+   No user PNG/logo is used by this hero. The old inline SVG is hidden so it cannot distort the hero height. */
+#home {
+  height: 390px !important;
+  min-height: 390px !important;
+  background: #eaf7ff !important;
+}
+
 #home > div:first-child {
-  background-image: url('/hero-generated.svg') !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 0 !important;
+  background-image: url('/hero-generated.jpg') !important;
   background-size: cover !important;
   background-position: center right !important;
   background-repeat: no-repeat !important;
+}
+
+#home > div:first-child > svg {
+  display: none !important;
+}
+
+#home > div:nth-child(2) {
+  inset: 0 auto 0 0 !important;
+  width: 54% !important;
+  z-index: 1 !important;
+  background: linear-gradient(90deg, rgba(234,247,255,.98) 0%, rgba(239,249,255,.96) 58%, rgba(255,255,255,0) 100%) !important;
+}
+
+#home > div:nth-child(3) {
+  height: 100% !important;
+  min-height: 390px !important;
+  z-index: 2 !important;
+}
+
+#home h1 {
+  font-size: 56px !important;
+  line-height: .95 !important;
+  letter-spacing: -.055em !important;
+}
+
+#home h1 span {
+  white-space: nowrap !important;
+}
+
+@media (min-width: 1280px) {
+  #home h1 { font-size: 58px !important; }
+}
+
+@media (max-width: 1023px) {
+  #home {
+    height: auto !important;
+    min-height: 540px !important;
+  }
+
+  #home > div:first-child {
+    height: 100% !important;
+    min-height: 540px !important;
+    background-position: 68% center !important;
+  }
+
+  #home > div:nth-child(2) {
+    width: 100% !important;
+    background: linear-gradient(180deg, rgba(234,247,255,.98) 0%, rgba(234,247,255,.9) 52%, rgba(255,255,255,.15) 100%) !important;
+  }
+
+  #home h1 {
+    font-size: clamp(42px, 8vw, 58px) !important;
+  }
+
+  #home h1 span {
+    white-space: normal !important;
+  }
 }
