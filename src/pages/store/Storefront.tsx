@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Heart, Leaf, Menu, Search, ShoppingCart, ShieldCheck, Sparkles, Truck, UserRound } from "lucide-react";
+import { ArrowRight, Check, Facebook, Heart, Instagram, Leaf, Menu, Search, ShoppingCart, ShieldCheck, Sparkles, Truck, UserRound, Youtube } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useCart } from "@/contexts/CartContext";
@@ -27,7 +27,22 @@ const whyUs = [
   [ShoppingCart, "Easy Ordering", "Simple shopping with guest checkout.", "bg-pink-500"],
 ] as const;
 
-const HeroArtwork = () => <div className="pointer-events-none absolute inset-0" aria-hidden="true" />;
+const HeroArtwork = () => (
+  <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+    <img
+      src="/hero-generated.jpg"
+      alt=""
+      className="absolute inset-y-0 right-0 h-full w-[68%] object-cover object-right-center"
+    />
+    <div className="absolute inset-y-0 left-0 w-[58%] bg-gradient-to-r from-[#eaf7ff] via-[#eff9ff]/95 to-transparent" />
+    <div className="absolute right-[3%] top-[9%] w-[18%] max-w-[220px] rotate-[-5deg] text-center font-sans italic">
+      <span className="block text-[20px] font-extrabold leading-[1.15] text-[#075b66] sm:text-[24px]">Small steps</span>
+      <span className="block text-[20px] font-extrabold leading-[1.15] text-[#075b66] sm:text-[24px]">for a cleaner</span>
+      <span className="block text-[20px] font-extrabold leading-[1.15] text-green-600 sm:text-[24px]">tomorrow.</span>
+      <span className="mx-auto mt-1 block h-[3px] w-24 rotate-[-3deg] rounded-full bg-green-600" />
+    </div>
+  </div>
+);
 
 const Storefront = () => {
   const navigate = useNavigate();
@@ -64,13 +79,12 @@ const Storefront = () => {
       </header>
 
       <main>
-        <section id="home" className="relative overflow-hidden bg-gradient-to-r from-[#e8f7ff] via-white to-[#eefbf7]">
+        <section id="home" className="relative h-[390px] overflow-hidden bg-[#eaf7ff]">
           <HeroArtwork />
-          <div className="absolute inset-y-0 left-0 z-[1] w-full bg-gradient-to-r from-[#e8f7ff] via-[#eefaff]/95 via-60% to-transparent lg:w-[58%]" />
-          <div className="relative z-10 mx-auto flex min-h-[385px] max-w-[1530px] items-center px-5 py-10 lg:px-10 lg:py-0">
+          <div className="relative z-10 mx-auto flex h-full max-w-[1530px] items-center px-5 lg:px-10">
             <div className="max-w-[760px] lg:w-[53%]">
               <p className="text-[11px] font-black uppercase tracking-[.34em] text-[#1e4f83]">A cleaner • healthier • happier home</p>
-              <h1 className="mt-5 text-[48px] font-black leading-[.94] tracking-[-.055em] text-[#073b70] sm:text-[58px] lg:text-[64px]">CLEAN HOME.<span className="block text-green-600">FRESH EVERY DAY.</span></h1>
+              <h1 className="mt-5 text-[48px] font-black leading-[.95] tracking-[-.055em] text-[#073b70] sm:text-[56px] lg:text-[60px]">CLEAN HOME.<span className="block text-green-600">FRESH EVERY DAY.</span></h1>
               <p className="mt-5 max-w-[610px] text-[16px] leading-6 text-[#385a7e] sm:text-[17px]">High quality cleaning &amp; personal care products made for modern homes — effective, affordable and reliable.</p>
               <div className="mt-6 flex flex-wrap gap-3"><a href="#products" className="inline-flex h-11 items-center gap-3 rounded-lg bg-[#073f76] px-6 text-sm font-black text-white shadow-lg shadow-blue-900/15">Shop Products <ArrowRight className="h-4 w-4" /></a><a href="#categories" className="inline-flex h-11 items-center gap-3 rounded-lg border border-[#8da9c4] bg-white/80 px-6 text-sm font-black text-[#073f76]">Explore Categories</a></div>
             </div>
@@ -95,7 +109,32 @@ const Storefront = () => {
         <section className="px-0 pb-0"><div className="relative overflow-hidden bg-gradient-to-r from-[#dff5d8] via-[#eefbe8] to-[#dff4ff] px-5 py-8 lg:px-12"><div className="mx-auto flex max-w-[1530px] items-center justify-between gap-8"><div className="relative z-10"><h2 className="text-[35px] font-black tracking-[-.04em] text-[#092f59]">Clean More. <span className="text-green-600">Spend Less.</span></h2><p className="mt-1 text-sm text-[#58708b]">Everyday essentials at prices you’ll love.</p><a href="#products" className="mt-4 inline-flex h-9 items-center gap-2 rounded-lg bg-green-600 px-5 text-xs font-black text-white">Shop Now <ArrowRight className="h-3.5 w-3.5" /></a></div><div className="hidden h-[120px] items-end sm:flex">{featured.slice(0,4).map((product) => <img key={product.id} src={getProductImage(product.slug)} alt="" className="h-[120px] w-[85px] object-contain" />)}</div><div className="hidden h-16 w-16 shrink-0 items-center justify-center rounded-full bg-green-600 text-center text-[9px] font-black text-white shadow-lg sm:flex">UP TO<br /><span className="text-lg">25%</span><br />OFF</div></div></div></section>
       </main>
 
-      <footer id="footer" className="bg-[#062447] text-slate-300"><div className="mx-auto grid max-w-[1530px] gap-8 px-5 py-8 sm:px-10 lg:grid-cols-[1.4fr_1fr_1fr]"><div><b className="text-[21px] text-white">Urban <span className="text-green-400">Shine</span></b><p className="mt-2 max-w-sm text-xs leading-5 text-slate-400">Quality home, kitchen, cleaning and personal care essentials made for everyday living.</p></div><div><h4 className="mb-2 text-xs font-black text-white">Shop</h4><div className="space-y-1.5 text-xs"><a href="#products" className="block">Products</a><a href="#categories" className="block">Categories</a><button onClick={() => navigate("/cart")} className="block">Your Cart</button></div></div><div><h4 className="mb-2 text-xs font-black text-white">Support</h4><div className="space-y-1.5 text-xs"><p>Delivery in 3–5 working days</p><p>UPI payment on checkout</p><button onClick={() => navigate("/login")}>Staff login</button></div></div></div><div className="border-t border-white/10 py-3 text-center text-[10px] text-slate-400">© 2026 Urban Shine. All rights reserved.</div></footer>
+      <footer id="footer" className="bg-[#062447] text-white">
+        <div className="mx-auto max-w-[1530px] px-5 sm:px-10">
+          <div className="grid items-center gap-6 border-b border-white/10 py-5 lg:grid-cols-[1fr_auto_1fr]">
+            <div className="text-left">
+              <b className="text-[21px] tracking-[-.03em] text-white">Urban <span className="text-green-400">Shine</span></b>
+              <p className="mt-1 text-[8px] uppercase tracking-[.08em] text-slate-400">Cleaner homes · brighter lives</p>
+            </div>
+            <nav className="flex items-center justify-center gap-7 text-[12px] text-slate-200">
+              <a href="#home" className="hover:text-white">Home</a>
+              <a href="#products" className="hover:text-white">Products</a>
+              <a href="#categories" className="hover:text-white">Categories</a>
+              <a href="#why-us" className="hover:text-white">About</a>
+              <a href="#footer" className="hover:text-white">Contact</a>
+            </nav>
+            <div className="flex items-center justify-end gap-4">
+              <a href="#footer" aria-label="Facebook" className="text-white"><Facebook className="h-4 w-4" /></a>
+              <a href="#footer" aria-label="Instagram" className="text-white"><Instagram className="h-4 w-4" /></a>
+              <a href="#footer" aria-label="YouTube" className="text-white"><Youtube className="h-4 w-4" /></a>
+            </div>
+          </div>
+          <div className="flex flex-col gap-3 py-3 text-[10px] text-slate-300 sm:flex-row sm:items-center sm:justify-between">
+            <span>© 2026 Urban Shine. All rights reserved.</span>
+            <div className="flex gap-6"><a href="#footer">Privacy Policy</a><a href="#footer">Terms &amp; Conditions</a></div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
