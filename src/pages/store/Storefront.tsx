@@ -7,11 +7,11 @@ import { useStoreProducts } from "@/hooks/useStoreProducts";
 import { getProductImage } from "@/data/productImages";
 
 const categories = [
-  ["Household Cleaning", "Floor Cleaner · Toilet Cleaner · Glass Cleaner", "floor-cleaner", "bg-[#e8f7ff]", ["floor-cleaner", "toilet-cleaner", "glass-cleaner"]],
-  ["Kitchen Care", "Dish Wash · Kitchen Cleaning", "dish-wash", "bg-[#eaf9e8]", ["dish-wash"]],
+  ["Household Cleaning", "Floor Cleaner · Toilet Cleaner · Phenyl", "floor-cleaner", "bg-[#e8f7ff]", ["floor-cleaner", "toilet-cleaner", "phenyl"]],
+  ["Kitchen Care", "Dish Wash · Soap Oil · Kitchen Cleaning", "dish-wash", "bg-[#eaf9e8]", ["dish-wash", "soap-oil"]],
   ["Laundry Care", "Liquid Detergent · Detergent Powder", "liquid-detergent", "bg-[#fff0f7]", ["liquid-detergent", "detergent-powder"]],
-  ["Personal Care", "Hand Wash · Body Care", "hand-wash", "bg-[#fff3e7]", ["hand-wash", "vaseline", "zandu-balm"]],
-  ["Specialty Care", "Copper Cleaner · More", "copper-cleaning-liquid", "bg-[#f0eaff]", ["copper-cleaning-liquid", "acid"]],
+  ["Personal Care", "Hand Wash · Vaseline · Balm · Rose Water", "hand-wash", "bg-[#fff3e7]", ["hand-wash", "vaseline", "zandu-balm", "rose-water"]],
+  ["Specialty Care", "Copper Cleaner · Acid Cleaner", "copper-cleaning-liquid", "bg-[#f0eaff]", ["copper-cleaning-liquid", "acid"]],
 ] as const;
 
 const benefits = [
@@ -46,6 +46,7 @@ const Storefront = () => {
   const { count, addItem } = useCart();
   const { data: products = [] } = useStoreProducts();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [showAllProducts, setShowAllProducts] = useState(false);
 
   const featuredSlugs = ["floor-cleaner", "dish-wash", "copper-cleaning-liquid", "hand-wash"];
   const featured = featuredSlugs
@@ -55,11 +56,32 @@ const Storefront = () => {
   const selectedCategory = categories.find(([title]) => title === activeCategory);
   const visibleProducts = activeCategory && selectedCategory
     ? products.filter((product) => selectedCategory[4].includes(product.slug as never))
-    : featured;
+    : showAllProducts
+      ? products
+      : featured;
+
+  const scrollToProducts = () => {
+    window.requestAnimationFrame(() => {
+      document.getElementById("products")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  };
 
   const selectCategory = (title: string) => {
+    setShowAllProducts(false);
     setActiveCategory((current) => current === title ? null : title);
-    window.requestAnimationFrame(() => document.getElementById("products")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    scrollToProducts();
+  };
+
+  const showAll = () => {
+    setActiveCategory(null);
+    setShowAllProducts(true);
+    scrollToProducts();
+  };
+
+  const showBestSellers = () => {
+    setActiveCategory(null);
+    setShowAllProducts(false);
+    scrollToProducts();
   };
 
   const add = (product: (typeof products)[number]) => {
@@ -75,7 +97,7 @@ const Storefront = () => {
           <a href="#home" className="shrink-0 text-[24px] font-black tracking-[-.04em] text-[#092f59]">Urban <span className="text-green-600">Shine</span></a>
           <nav className="hidden items-center gap-2 lg:flex">
             <a href="#home" className="rounded-full bg-[#edf5ff] px-5 py-2.5 text-sm font-black text-blue-700">Home</a>
-            <a href="#products" className="rounded-full px-4 py-2.5 text-sm font-bold text-[#092f59]">Products</a>
+            <button onClick={showAll} className="rounded-full px-4 py-2.5 text-sm font-bold text-[#092f59]">Products</button>
             <a href="#categories" className="rounded-full px-4 py-2.5 text-sm font-bold text-[#092f59]">Categories</a>
             <a href="#why-us" className="rounded-full px-4 py-2.5 text-sm font-bold text-[#092f59]">About</a>
             <a href="#footer" className="rounded-full px-4 py-2.5 text-sm font-bold text-[#092f59]">Contact</a>
@@ -96,7 +118,7 @@ const Storefront = () => {
               <p className="text-[11px] font-black uppercase tracking-[.34em] text-[#1e4f83]">A cleaner • healthier • happier home</p>
               <h1 className="mt-5 text-[48px] font-black leading-[.95] tracking-[-.055em] text-[#073b70] sm:text-[56px] lg:text-[60px]">CLEAN HOME.<span className="block text-green-600">FRESH EVERY DAY.</span></h1>
               <p className="mt-5 max-w-[610px] text-[16px] leading-6 text-[#385a7e] sm:text-[17px]">High quality cleaning &amp; personal care products made for modern homes — effective, affordable and reliable.</p>
-              <div className="mt-6 flex flex-wrap gap-3"><a href="#products" onClick={() => setActiveCategory(null)} className="inline-flex h-11 items-center gap-3 rounded-lg bg-[#073f76] px-6 text-sm font-black text-white shadow-lg shadow-blue-900/15">Shop Products <ArrowRight className="h-4 w-4" /></a><a href="#categories" className="inline-flex h-11 items-center gap-3 rounded-lg border border-[#8da9c4] bg-white/80 px-6 text-sm font-black text-[#073f76]">Explore Categories</a></div>
+              <div className="mt-6 flex flex-wrap gap-3"><button onClick={showAll} className="inline-flex h-11 items-center gap-3 rounded-lg bg-[#073f76] px-6 text-sm font-black text-white shadow-lg shadow-blue-900/15">Shop Products <ArrowRight className="h-4 w-4" /></button><a href="#categories" className="inline-flex h-11 items-center gap-3 rounded-lg border border-[#8da9c4] bg-white/80 px-6 text-sm font-black text-[#073f76]">Explore Categories</a></div>
             </div>
           </div>
         </section>
@@ -113,20 +135,33 @@ const Storefront = () => {
           </div>
         </section>
 
-        <section id="products" className="scroll-mt-16 bg-[#f2f9ff] px-5 py-8 lg:px-10"><div className="mx-auto max-w-[1530px]"><div className="flex items-end justify-between"><div><h2 className="text-[29px] font-black tracking-[-.03em] text-[#092f59]">{activeCategory ? activeCategory : "Best Sellers"}</h2><p className="mt-1 text-sm text-[#58708b]">{activeCategory ? "Products in this category" : "Our most loved everyday essentials"}</p></div><div className="flex items-center gap-4"><button onClick={() => { setActiveCategory(null); window.requestAnimationFrame(() => document.getElementById("products")?.scrollIntoView({ behavior: "smooth", block: "start" })); }} className={`text-xs font-black ${activeCategory ? "text-green-700" : "text-blue-700"}`}>{activeCategory ? "← Show Best Sellers" : ""}</button><button onClick={() => { setActiveCategory(null); document.getElementById("products")?.scrollIntoView({ behavior: "smooth", block: "start" }); }} className="hidden items-center gap-1 text-sm font-black text-blue-700 sm:flex">View All Products <ArrowRight className="h-4 w-4" /></button></div></div>
-          {visibleProducts.length > 0 ? <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{visibleProducts.map((product, index) => { const discount = product.mrp && product.mrp > product.price ? Math.round(((product.mrp - product.price) / product.mrp) * 100) : 0; const badge = activeCategory ? "CATEGORY" : index === 3 ? "NEW" : index === 1 ? "POPULAR" : "BEST SELLER"; return <article key={product.id} className="overflow-hidden rounded-xl border border-[#dbe7f0] bg-white shadow-[0_3px_14px_rgba(25,64,95,.05)] transition hover:-translate-y-1 hover:shadow-lg"><div className="relative flex h-[205px] items-center justify-center bg-gradient-to-b from-white to-[#f8fbfd]"><span className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[9px] font-black text-white ${badge === "NEW" ? "bg-pink-500" : badge === "POPULAR" ? "bg-blue-600" : badge === "CATEGORY" ? "bg-green-600" : "bg-green-600"}`}>{badge}</span><button className="absolute right-3 top-3 rounded-full bg-white p-1.5 text-[#577594] shadow-sm" aria-label="Wishlist"><Heart className="h-4 w-4" /></button><img src={getProductImage(product.slug)} alt={product.name} className="h-[190px] w-[82%] object-contain transition-transform duration-300 hover:scale-105" /></div><div className="p-3.5"><h3 className="text-[13px] font-black text-[#092f59]">{product.name}</h3><p className="mt-0.5 text-[11px] text-[#607895]">{product.tagline}</p><div className="mt-2.5 flex flex-wrap items-center gap-1.5"><b className="text-[18px] text-[#092f59]">₹{product.price}</b>{discount > 0 && <span className="text-[10px] text-slate-400 line-through">₹{product.mrp}</span>}{discount > 0 && <span className="rounded-full bg-green-100 px-2 py-1 text-[9px] font-black text-green-700">{discount}% OFF</span>}</div><small className="text-[10px] text-slate-400">{product.uom}</small><button onClick={() => add(product)} className="mt-2.5 flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-[#073f76] text-xs font-black text-white shadow-sm"><ShoppingCart className="h-3.5 w-3.5" /> Add to Cart</button></div></article>; })}</div> : <div className="mt-5 rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center text-sm text-slate-500">No products found in this category yet.</div>}
-        </div></section>
+        <section id="products" className="scroll-mt-16 bg-[#f2f9ff] px-5 py-8 lg:px-10">
+          <div className="mx-auto max-w-[1530px]">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <h2 className="text-[29px] font-black tracking-[-.03em] text-[#092f59]">{activeCategory ? activeCategory : showAllProducts ? "All Products" : "Best Sellers"}</h2>
+                <p className="mt-1 text-sm text-[#58708b]">{activeCategory ? "Products in this category" : showAllProducts ? `${products.length} products available` : "Our most loved everyday essentials"}</p>
+              </div>
+              <div className="flex items-center gap-4">
+                {activeCategory && <button onClick={showBestSellers} className="text-xs font-black text-green-700">← Show Best Sellers</button>}
+                {!showAllProducts && <button onClick={showAll} className="hidden items-center gap-1 text-sm font-black text-blue-700 sm:flex">View All Products <ArrowRight className="h-4 w-4" /></button>}
+                {showAllProducts && <button onClick={showBestSellers} className="text-sm font-black text-blue-700">Show Best Sellers</button>}
+              </div>
+            </div>
+            {visibleProducts.length > 0 ? <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{visibleProducts.map((product, index) => { const discount = product.mrp && product.mrp > product.price ? Math.round(((product.mrp - product.price) / product.mrp) * 100) : 0; const badge = activeCategory ? "CATEGORY" : showAllProducts ? "PRODUCT" : index === 3 ? "NEW" : index === 1 ? "POPULAR" : "BEST SELLER"; return <article key={product.id} className="overflow-hidden rounded-xl border border-[#dbe7f0] bg-white shadow-[0_3px_14px_rgba(25,64,95,.05)] transition hover:-translate-y-1 hover:shadow-lg"><div className="relative flex h-[205px] items-center justify-center bg-gradient-to-b from-white to-[#f8fbfd]"><span className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[9px] font-black text-white ${badge === "NEW" ? "bg-pink-500" : badge === "POPULAR" ? "bg-blue-600" : "bg-green-600"}`}>{badge}</span><button className="absolute right-3 top-3 rounded-full bg-white p-1.5 text-[#577594] shadow-sm" aria-label="Wishlist"><Heart className="h-4 w-4" /></button><img src={getProductImage(product.slug)} alt={product.name} className="h-[190px] w-[82%] object-contain transition-transform duration-300 hover:scale-105" /></div><div className="p-3.5"><h3 className="text-[13px] font-black text-[#092f59]">{product.name}</h3><p className="mt-0.5 text-[11px] text-[#607895]">{product.tagline}</p><div className="mt-2.5 flex flex-wrap items-center gap-1.5"><b className="text-[18px] text-[#092f59]">₹{product.price}</b>{discount > 0 && <span className="text-[10px] text-slate-400 line-through">₹{product.mrp}</span>}{discount > 0 && <span className="rounded-full bg-green-100 px-2 py-1 text-[9px] font-black text-green-700">{discount}% OFF</span>}</div><small className="text-[10px] text-slate-400">{product.uom}</small><button onClick={() => add(product)} className="mt-2.5 flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-[#073f76] text-xs font-black text-white shadow-sm"><ShoppingCart className="h-3.5 w-3.5" /> Add to Cart</button></div></article>; })}</div> : <div className="mt-5 rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center text-sm text-slate-500">No products found in this category yet.</div>}
+          </div>
+        </section>
 
         <section id="why-us" className="mx-auto max-w-[1530px] px-5 py-9 lg:px-10"><div className="text-center"><h2 className="text-[29px] font-black tracking-[-.03em] text-[#092f59]">Why Choose Urban Shine?</h2><p className="mt-1 text-sm text-[#58708b]">Quality products for a cleaner and healthier tomorrow</p></div><div className="mt-7 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{whyUs.map(([Icon, title, text, bg]) => <div key={title} className="flex items-start justify-center gap-3"><span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${bg} text-white`}><Icon className="h-5 w-5" /></span><div><h3 className="text-[12px] font-black text-[#092f59]">{title}</h3><p className="mt-1 max-w-[190px] text-[10px] leading-4 text-[#607895]">{text}</p></div></div>)}</div></section>
 
-        <section className="px-0 pb-0"><div className="relative overflow-hidden bg-gradient-to-r from-[#dff5d8] via-[#eefbe8] to-[#dff4ff] px-5 py-8 lg:px-12"><div className="mx-auto flex max-w-[1530px] items-center justify-between gap-8"><div className="relative z-10"><h2 className="text-[35px] font-black tracking-[-.04em] text-[#092f59]">Clean More. <span className="text-green-600">Spend Less.</span></h2><p className="mt-1 text-sm text-[#58708b]">Everyday essentials at prices you’ll love.</p><a href="#products" onClick={() => setActiveCategory(null)} className="mt-4 inline-flex h-9 items-center gap-2 rounded-lg bg-green-600 px-5 text-xs font-black text-white">Shop Now <ArrowRight className="h-3.5 w-3.5" /></a></div><div className="hidden h-[120px] items-end sm:flex">{featured.slice(0,4).map((product) => <img key={product.id} src={getProductImage(product.slug)} alt="" className="h-[120px] w-[85px] object-contain" />)}</div><div className="hidden h-16 w-16 shrink-0 items-center justify-center rounded-full bg-green-600 text-center text-[9px] font-black text-white shadow-lg sm:flex">UP TO<br /><span className="text-lg">25%</span><br />OFF</div></div></div></section>
+        <section className="px-0 pb-0"><div className="relative overflow-hidden bg-gradient-to-r from-[#dff5d8] via-[#eefbe8] to-[#dff4ff] px-5 py-8 lg:px-12"><div className="mx-auto flex max-w-[1530px] items-center justify-between gap-8"><div className="relative z-10"><h2 className="text-[35px] font-black tracking-[-.04em] text-[#092f59]">Clean More. <span className="text-green-600">Spend Less.</span></h2><p className="mt-1 text-sm text-[#58708b]">Everyday essentials at prices you’ll love.</p><button onClick={showAll} className="mt-4 inline-flex h-9 items-center gap-2 rounded-lg bg-green-600 px-5 text-xs font-black text-white">Shop Now <ArrowRight className="h-3.5 w-3.5" /></button></div><div className="hidden h-[120px] items-end sm:flex">{featured.slice(0,4).map((product) => <img key={product.id} src={getProductImage(product.slug)} alt="" className="h-[120px] w-[85px] object-contain" />)}</div><div className="hidden h-16 w-16 shrink-0 items-center justify-center rounded-full bg-green-600 text-center text-[9px] font-black text-white shadow-lg sm:flex">UP TO<br /><span className="text-lg">25%</span><br />OFF</div></div></div></section>
       </main>
 
       <footer id="footer" className="bg-[#062447] text-white">
         <div className="mx-auto max-w-[1530px] px-5 sm:px-10">
           <div className="grid items-center gap-6 border-b border-white/10 py-5 lg:grid-cols-[1fr_auto_1fr]">
             <div className="text-left"><b className="text-[21px] tracking-[-.03em] text-white">Urban <span className="text-green-400">Shine</span></b><p className="mt-1 text-[8px] uppercase tracking-[.08em] text-slate-400">Cleaner homes · brighter lives</p></div>
-            <nav className="flex items-center justify-center gap-7 text-[12px] text-slate-200"><a href="#home" className="hover:text-white">Home</a><a href="#products" className="hover:text-white">Products</a><a href="#categories" className="hover:text-white">Categories</a><a href="#why-us" className="hover:text-white">About</a><a href="#footer" className="hover:text-white">Contact</a></nav>
+            <nav className="flex items-center justify-center gap-7 text-[12px] text-slate-200"><a href="#home" className="hover:text-white">Home</a><button onClick={showAll} className="hover:text-white">Products</button><a href="#categories" className="hover:text-white">Categories</a><a href="#why-us" className="hover:text-white">About</a><a href="#footer" className="hover:text-white">Contact</a></nav>
             <div className="flex items-center justify-end gap-4"><a href="#footer" aria-label="Facebook" className="text-white"><Facebook className="h-4 w-4" /></a><a href="#footer" aria-label="Instagram" className="text-white"><Instagram className="h-4 w-4" /></a><a href="#footer" aria-label="YouTube" className="text-white"><Youtube className="h-4 w-4" /></a></div>
           </div>
           <div className="flex flex-col gap-3 py-3 text-[10px] text-slate-300 sm:flex-row sm:items-center sm:justify-between"><span>© 2026 Urban Shine. All rights reserved.</span><div className="flex gap-6"><a href="#footer">Privacy Policy</a><a href="#footer">Terms &amp; Conditions</a></div></div>
