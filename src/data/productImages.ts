@@ -1,18 +1,16 @@
-import acid from "@/assets/products/Acid-Cleaner.png";
-import balm from "@/assets/products/Balm.png";
-import copper from "@/assets/products/Copper-Cleaner.png";
-import detergentPowder from "@/assets/products/Detergent-Powder.png";
-import handWash from "@/assets/products/Hand-Wash.png";
-import liquidDetergent from "@/assets/products/Liquid-Detergent.png";
-import phenyl from "@/assets/products/Phenyl.png";
-import roseWater from "@/assets/products/Rose-Water.png";
-import soapOil from "@/assets/products/Soap-Oil.png";
-import toiletCleaner from "@/assets/products/Toilet-Cleaner.png";
-import vaseline from "@/assets/products/Vaseline.png";
-
-// The latest uploaded product artwork is served from public/products.
-const floorCleaner = "/products/Floor-Cleaner.webp";
-const dishWash = "/products/Dish-Wash.webp";
+import acid from "@/assets/products/Products-nobackground/Acid Cleaner.png";
+import balm from "@/assets/products/Products-nobackground/Pain Relif Balm.png";
+import copper from "@/assets/products/Products-nobackground/Copper-Cleaner.png";
+import detergentPowder from "@/assets/products/Products-nobackground/Detergent Powder.png";
+import dishWash from "@/assets/products/Products-nobackground/Dish Wash.png";
+import floorCleaner from "@/assets/products/Products-nobackground/Floor Cleaner.png";
+import handWash from "@/assets/products/Products-nobackground/Hand Wash.png";
+import liquidDetergent from "@/assets/products/Products-nobackground/Liquid Detergent.png";
+import phenyl from "@/assets/products/Products-nobackground/Phenyl.png";
+import roseWater from "@/assets/products/Products-nobackground/Rose Water.png";
+import soapOil from "@/assets/products/Products-nobackground/Soap Oil.png";
+import toiletCleaner from "@/assets/products/Products-nobackground/Toilet Cleaner.png";
+import vaseline from "@/assets/products/Products-nobackground/Vaseline.png";
 
 export const productImages: Record<string, string> = {
   acid,
