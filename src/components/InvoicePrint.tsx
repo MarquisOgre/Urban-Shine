@@ -24,7 +24,7 @@ const InvoicePrint = ({ invoice, onClose }: InvoicePrintProps) => {
     const pad = (value: number) => String(value).padStart(2, "0");
     const generatedDateText = `${generatedDate.getFullYear()}-${pad(generatedDate.getMonth() + 1)}-${pad(generatedDate.getDate())}`;
 
-    document.title = `UrbanShine-${year}-Inv-${sequence}-InvoiceGenerated-${generatedDateText}`;
+    document.title = `UrbanShine-${year}-Inv-${sequence}-${generatedDateText}`;
 
     // Auto print after a brief delay
     const timer = setTimeout(handlePrint, 500);
