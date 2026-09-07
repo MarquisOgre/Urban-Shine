@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useProductPrices } from "@/hooks/useCloudData";
+import { supabase } from "@/integrations/supabase/client";
 
 interface InvoiceModalProps {
   open: boolean;
@@ -48,7 +49,6 @@ const InvoiceModal = ({
 
   const { data: priceData = [] } = useProductPrices();
 
-  // Populate form if editing existing invoice
   useEffect(() => {
     if (invoice) {
       setFormData({
@@ -98,7 +98,6 @@ const InvoiceModal = ({
   const handleItemChange = (index: number, field: string, value: any) => {
     const newItems = [...formData.items];
 
-    // When product is selected
     if (field === "description" && value.includes("|")) {
       const [formulationName, size, price] = value.split("|");
       newItems[index] = {
@@ -137,19 +136,51 @@ const InvoiceModal = ({
     setFormData({ ...formData, items: newItems });
   };
 
-  const generateInvoiceNumber = () => {
-    const timestamp = Date.now();
-    return `INV-${timestamp}`;
+  // Generate the lowest available invoice number for the current year.
+  // Deleted invoice numbers are therefore reused automatically.
+  const generateInvoiceNumber = async () => {
+    const year = new Date().getFullYear();
+    const prefix = `US-${year}-INV-`;
+
+    const { data, error } = await supabase
+      .from("invoices")
+      .select("invoice_number")
+      .like("invoice_number", `${prefix}%`);
+
+    if (error) {
+      console.error("Invoice number generation error:", error);
+      throw error;
+    }
+
+    const usedNumbers = new Set<number>();
+
+    (data || []).forEach((invoiceRecord: any) => {
+      const match = invoiceRecord.invoice_number?.match(
+        new RegExp(`^US-${year}-INV-(\\d+)$`)
+      );
+
+      if (match) {
+        usedNumbers.add(parseInt(match[1], 10));
+      }
+    });
+
+    let nextNumber = 1;
+    while (usedNumbers.has(nextNumber)) {
+      nextNumber++;
+    }
+
+    return `${prefix}${String(nextNumber).padStart(3, "0")}`;
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const subtotal = formData.items.reduce((sum, item) => sum + item.amount, 0);
     const discountAmount = (subtotal * formData.discount) / 100;
     const afterDiscount = subtotal - discountAmount;
     const taxAmount = (afterDiscount * formData.taxRate) / 100;
     const total = afterDiscount + taxAmount;
 
-    const invoiceNumber = invoice?.invoice_number || generateInvoiceNumber();
+    const invoiceNumber =
+      invoice?.invoice_number || (await generateInvoiceNumber());
 
     const invoiceData = {
       invoice_number: invoiceNumber,
@@ -166,7 +197,8 @@ const InvoiceModal = ({
       tax_amount: taxAmount,
       total_amount: total,
       status: "Pending",
-      invoice_date: invoice?.invoice_date || new Date().toISOString().split("T")[0],
+      invoice_date:
+        invoice?.invoice_date || new Date().toISOString().split("T")[0],
       notes: formData.notes || null,
     };
 
@@ -182,7 +214,6 @@ const InvoiceModal = ({
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Customer Selection */}
           <div>
             <Label htmlFor="customer">Select Customer</Label>
             <Select
@@ -202,7 +233,6 @@ const InvoiceModal = ({
             </Select>
           </div>
 
-          {/* Customer Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Customer Name</Label>
@@ -256,7 +286,6 @@ const InvoiceModal = ({
             />
           </div>
 
-          {/* Item List */}
           <div>
             <div className="flex justify-between items-center mb-4">
               <Label className="text-lg font-semibold">Items</Label>
@@ -271,29 +300,29 @@ const InvoiceModal = ({
                   key={index}
                   className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr_auto] gap-2 items-end"
                 >
-                <div>
-                  <Label>Product Name</Label>
-                  <Select
-                    onValueChange={(value) =>
-                      handleItemChange(index, "description", value)
-                    }
-                  >
-                    <SelectTrigger className="bg-white">
-                      <SelectValue placeholder={item.description || "Select product"} />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white border shadow-lg max-h-[300px] z-[100]">
-                      {priceData.map((product) => (
-                        <SelectItem
-                          key={product.id}
-                          value={`${product.product}|${product.uom || '1 Ltr'}|${product.retailPrice}`}
-                        >
-                          {product.product} - {product.uom || '1 Ltr'} (₹
-                          {product.retailPrice.toFixed(2)})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                  <div>
+                    <Label>Product Name</Label>
+                    <Select
+                      onValueChange={(value) =>
+                        handleItemChange(index, "description", value)
+                      }
+                    >
+                      <SelectTrigger className="bg-white">
+                        <SelectValue placeholder={item.description || "Select product"} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white border shadow-lg max-h-[300px] z-[100]">
+                        {priceData.map((product) => (
+                          <SelectItem
+                            key={product.id}
+                            value={`${product.product}|${product.uom || '1 Ltr'}|${product.retailPrice}`}
+                          >
+                            {product.product} - {product.uom || '1 Ltr'} (₹
+                            {product.retailPrice.toFixed(2)})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
                   <div>
                     <Label>Qty</Label>
@@ -333,7 +362,6 @@ const InvoiceModal = ({
             </div>
           </div>
 
-          {/* Discount, Tax & Notes */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <Label>Discount (%)</Label>
@@ -378,7 +406,6 @@ const InvoiceModal = ({
             </div>
           </div>
 
-          {/* Summary */}
           {(() => {
             const subtotal = formData.items.reduce((sum, item) => sum + item.amount, 0);
             const discountAmt = (subtotal * formData.discount) / 100;
@@ -411,7 +438,6 @@ const InvoiceModal = ({
             );
           })()}
 
-          {/* Buttons */}
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={onClose}>
               Cancel
