@@ -47,9 +47,8 @@
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
     --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 240 4.8% 95.9%;
+    --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
@@ -71,7 +70,7 @@
   body { @apply bg-background text-foreground; }
 }
 
-/* Homepage reference match. The hero uses the existing AI-generated photographic artwork. */
+/* Homepage reference dimensions. The artwork itself is a direct <img> inside Storefront.tsx. */
 #home {
   height: 390px !important;
   min-height: 390px !important;
@@ -79,50 +78,28 @@
 }
 
 #home > div:first-child {
+  position: absolute !important;
   inset: 0 !important;
   width: 100% !important;
   height: 100% !important;
   z-index: 0 !important;
-  background-image: url('/hero-generated.jpg') !important;
-  background-size: cover !important;
-  background-position: center right !important;
-  background-repeat: no-repeat !important;
 }
 
-#home > div:first-child > svg {
-  display: none !important;
-}
-
-#home > div:first-child::after {
-  content: "Small steps\\A for a cleaner\\A tomorrow.";
-  white-space: pre;
-  position: absolute;
-  right: 3.5%;
-  top: 24px;
-  z-index: 1;
-  width: 145px;
-  color: #075b66;
-  font-family: cursive;
-  font-size: 23px;
-  font-weight: 700;
-  line-height: 1.08;
-  font-style: italic;
-  transform: rotate(-5deg);
-  text-align: center;
-  text-shadow: 0 1px 0 rgba(255,255,255,.5);
+#home > div:first-child > img {
+  position: absolute !important;
+  inset: 0 0 0 auto !important;
+  width: 68% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: right center !important;
 }
 
 #home > div:nth-child(2) {
-  inset: 0 auto 0 0 !important;
-  width: 54% !important;
-  z-index: 1 !important;
-  background: linear-gradient(90deg, rgba(234,247,255,.98) 0%, rgba(239,249,255,.96) 58%, rgba(255,255,255,0) 100%) !important;
-}
-
-#home > div:nth-child(3) {
+  position: relative !important;
+  width: 100% !important;
   height: 100% !important;
   min-height: 390px !important;
-  z-index: 2 !important;
+  z-index: 10 !important;
 }
 
 #home h1 {
@@ -148,18 +125,17 @@
   #home > div:first-child {
     height: 100% !important;
     min-height: 540px !important;
-    background-position: 68% center !important;
   }
 
-  #home > div:first-child::after {
-    right: 4%;
-    top: 22px;
-    font-size: 20px;
+  #home > div:first-child > img {
+    width: 100% !important;
+    height: 100% !important;
+    object-position: 68% center !important;
   }
 
   #home > div:nth-child(2) {
     width: 100% !important;
-    background: linear-gradient(180deg, rgba(234,247,255,.98) 0%, rgba(234,247,255,.9) 52%, rgba(255,255,255,.15) 100%) !important;
+    min-height: 540px !important;
   }
 
   #home h1 {
