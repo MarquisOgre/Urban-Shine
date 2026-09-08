@@ -69,3 +69,50 @@
   * { @apply border-border; }
   body { @apply bg-background text-foreground; }
 }
+
+/* Category cards: cleaner typography and larger product presentation */
+#categories > div:first-child h2 {
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+#categories > div:first-child p {
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-weight: 400;
+}
+
+#categories .grid > button h3,
+#categories .grid > button p,
+#categories .grid > button span {
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+#categories .grid > button h3 {
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+}
+
+#categories .grid > button p {
+  font-weight: 400;
+  font-size: 11px;
+}
+
+#categories .grid > button span {
+  font-weight: 600;
+  font-size: 11px;
+}
+
+#categories .grid > button > div:first-child {
+  height: 180px;
+}
+
+#categories .grid > button > div:first-child > img {
+  padding: 0;
+  transform: scale(1.28);
+}
+
+#categories .grid > button:hover > div:first-child > img {
+  transform: scale(1.35);
+}
