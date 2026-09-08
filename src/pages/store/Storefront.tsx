@@ -98,15 +98,18 @@ const Storefront = () => {
 
         <section id="why-us" className="mx-auto max-w-[1530px] px-5 py-9 lg:px-10"><div className="text-center"><h2 className="text-[29px] font-black tracking-[-.03em] text-[#092f59]">Why Choose Urban Shine?</h2><p className="mt-1 text-sm text-[#58708b]">Quality products for a cleaner and healthier tomorrow</p></div><div className="mt-7 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{whyUs.map(([Icon, title, text, bg]) => <div key={title} className="flex items-start justify-center gap-3"><span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${bg} text-white`}><Icon className="h-5 w-5" /></span><div><h3 className="text-[12px] font-black text-[#092f59]">{title}</h3><p className="mt-1 max-w-[190px] text-[10px] leading-4 text-[#607895]">{text}</p></div></div>)}</div></section>
 
-        <section className="relative overflow-hidden bg-[#eaf7ff] px-5 py-8 lg:px-12">
-          <img src={promoBanner} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-white/10" />
-          <div className="relative z-10 mx-auto flex min-h-[220px] max-w-[1530px] items-center">
-            <div className="max-w-[470px]">
-              <h2 className="text-[35px] font-black tracking-[-.04em] text-[#092f59]">Clean More. <span className="text-green-600">Spend Less.</span></h2>
-              <p className="mt-1 text-sm font-medium text-[#58708b]">Everyday essentials at prices you’ll love.</p>
-              <button onClick={showAll} className="mt-4 inline-flex h-9 items-center gap-2 rounded-lg bg-green-600 px-5 text-xs font-black text-white shadow-md transition hover:bg-green-700">Shop Now <ArrowRight className="h-3.5 w-3.5" /></button>
-              <div className="mt-4 inline-flex rounded-full bg-green-600 px-4 py-2 text-[10px] font-black text-white shadow-md">UP TO <span className="mx-1 text-base leading-none">25%</span> OFF</div>
+        <section className="px-0 pb-0">
+          <div className="relative w-full overflow-hidden bg-gradient-to-r from-[#dff5d8] via-[#eefbe8] to-[#dff4ff]" style={{ aspectRatio: "2172 / 724" }}>
+            <img src={promoBanner} alt="" className="absolute inset-0 h-full w-full object-cover object-center" />
+            <div className="relative z-10 mx-auto flex h-full max-w-[1530px] items-center px-5 lg:px-10">
+              <div className="max-w-[560px]">
+                <h2 className="text-[32px] font-black leading-[1.05] tracking-[-0.04em] text-[#092f59] sm:text-[40px] lg:text-[46px]">Clean More. <span className="text-green-600">Spend Less.</span></h2>
+                <p className="mt-2 text-sm font-medium text-[#58708b] sm:text-base">Everyday essentials at prices you’ll love.</p>
+                <button onClick={showAll} className="mt-5 inline-flex h-11 items-center gap-2 rounded-lg bg-green-600 px-6 text-sm font-black text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-green-700">Shop Now <ArrowRight className="h-4 w-4" /></button>
+              </div>
+              <div className="absolute right-5 top-1/2 z-20 flex h-[82px] w-[82px] -translate-y-1/2 items-center justify-center rounded-full bg-green-600 text-center font-black text-white shadow-xl sm:right-8 sm:h-[100px] sm:w-[100px] lg:right-12">
+                <div className="leading-none"><span className="block text-[9px] sm:text-[10px]">UP TO</span><span className="block text-[27px] sm:text-[32px]">25%</span><span className="block text-[9px] sm:text-[10px]">OFF</span></div>
+              </div>
             </div>
           </div>
         </section>
