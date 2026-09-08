@@ -4,12 +4,16 @@ import StoreHeader from "@/components/store/StoreHeader";
 import StoreFooter from "@/components/store/StoreFooter";
 import { useCart } from "@/contexts/CartContext";
 import { getProductImage } from "@/data/productImages";
-import { FREE_SHIPPING_ABOVE, SHIPPING_FEE } from "@/config/store";
+import { useStoreSettings } from "@/hooks/useStoreSettings";
 
 const CartPage = () => {
   const { items, setQty, removeItem, subtotal } = useCart();
   const navigate = useNavigate();
-  const shipping = items.length === 0 || subtotal >= FREE_SHIPPING_ABOVE ? 0 : SHIPPING_FEE;
+  const { data: settings } = useStoreSettings();
+
+  const freeShippingAbove = settings?.freeShippingAbove ?? 999;
+  const shippingFee = settings?.shippingFee ?? 60;
+  const shipping = items.length === 0 || subtotal >= freeShippingAbove ? 0 : shippingFee;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -83,9 +87,9 @@ const CartPage = () => {
                   <dd className="font-extrabold">₹{(subtotal + shipping).toFixed(2)}</dd>
                 </div>
               </dl>
-              {subtotal < FREE_SHIPPING_ABOVE && (
+              {subtotal < freeShippingAbove && (
                 <p className="mt-3 text-xs text-slate-500">
-                  Add ₹{(FREE_SHIPPING_ABOVE - subtotal).toFixed(2)} more for free delivery.
+                  Add ₹{(freeShippingAbove - subtotal).toFixed(2)} more for free delivery.
                 </p>
               )}
               <button
