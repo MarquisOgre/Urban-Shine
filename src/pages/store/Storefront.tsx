@@ -6,6 +6,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useStoreProducts } from "@/hooks/useStoreProducts";
 import { getProductImage } from "@/data/productImages";
 import heroImage from "@/assets/hero.png";
+import promoBanner from "@/assets/promo-banner.png";
 
 const categories = [
   ["Household Cleaning", "Floor Cleaner · Toilet Cleaner · Phenyl", "floor-cleaner", "bg-[#e8f7ff]", ["floor-cleaner", "toilet-cleaner", "phenyl"]],
@@ -97,7 +98,18 @@ const Storefront = () => {
 
         <section id="why-us" className="mx-auto max-w-[1530px] px-5 py-9 lg:px-10"><div className="text-center"><h2 className="text-[29px] font-black tracking-[-.03em] text-[#092f59]">Why Choose Urban Shine?</h2><p className="mt-1 text-sm text-[#58708b]">Quality products for a cleaner and healthier tomorrow</p></div><div className="mt-7 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{whyUs.map(([Icon, title, text, bg]) => <div key={title} className="flex items-start justify-center gap-3"><span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${bg} text-white`}><Icon className="h-5 w-5" /></span><div><h3 className="text-[12px] font-black text-[#092f59]">{title}</h3><p className="mt-1 max-w-[190px] text-[10px] leading-4 text-[#607895]">{text}</p></div></div>)}</div></section>
 
-        <section className="px-0 pb-0"><div className="relative overflow-hidden bg-gradient-to-r from-[#dff5d8] via-[#eefbe8] to-[#dff4ff] px-5 py-8 lg:px-12"><div className="mx-auto flex max-w-[1530px] items-center justify-between gap-8"><div className="relative z-10"><h2 className="text-[35px] font-black tracking-[-.04em] text-[#092f59]">Clean More. <span className="text-green-600">Spend Less.</span></h2><p className="mt-1 text-sm text-[#58708b]">Everyday essentials at prices you’ll love.</p><button onClick={showAll} className="mt-4 inline-flex h-9 items-center gap-2 rounded-lg bg-green-600 px-5 text-xs font-black text-white">Shop Now <ArrowRight className="h-3.5 w-3.5" /></button></div><div className="hidden h-[120px] items-end sm:flex">{featured.slice(0,4).map((product) => <img key={product.id} src={getProductImage(product.slug)} alt="" className="h-[120px] w-[85px] object-contain" />)}</div><div className="hidden h-16 w-16 shrink-0 items-center justify-center rounded-full bg-green-600 text-center text-[9px] font-black text-white shadow-lg sm:flex">UP TO<br /><span className="text-lg">25%</span><br />OFF</div></div></div></section>
+        <section className="relative overflow-hidden bg-[#eaf7ff] px-5 py-8 lg:px-12">
+          <img src={promoBanner} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-white/10" />
+          <div className="relative z-10 mx-auto flex min-h-[220px] max-w-[1530px] items-center">
+            <div className="max-w-[470px]">
+              <h2 className="text-[35px] font-black tracking-[-.04em] text-[#092f59]">Clean More. <span className="text-green-600">Spend Less.</span></h2>
+              <p className="mt-1 text-sm font-medium text-[#58708b]">Everyday essentials at prices you’ll love.</p>
+              <button onClick={showAll} className="mt-4 inline-flex h-9 items-center gap-2 rounded-lg bg-green-600 px-5 text-xs font-black text-white shadow-md transition hover:bg-green-700">Shop Now <ArrowRight className="h-3.5 w-3.5" /></button>
+              <div className="mt-4 inline-flex rounded-full bg-green-600 px-4 py-2 text-[10px] font-black text-white shadow-md">UP TO <span className="mx-1 text-base leading-none">25%</span> OFF</div>
+            </div>
+          </div>
+        </section>
       </main>
 
       <footer id="footer" className="bg-[#062447] text-white"><div className="mx-auto max-w-[1530px] px-5 sm:px-10"><div className="grid items-center gap-6 border-b border-white/10 py-5 lg:grid-cols-[1fr_auto_1fr]"><div className="text-left"><b className="text-[21px] tracking-[-.03em] text-white">Urban <span className="text-green-400">Shine</span></b><p className="mt-1 text-[8px] uppercase tracking-[.08em] text-slate-400">Cleaner homes · brighter lives</p></div><nav className="flex items-center justify-center gap-7 text-[12px] text-slate-200"><a href="#home" className="hover:text-white">Home</a><button onClick={showAll} className="hover:text-white">Products</button><a href="#categories" className="hover:text-white">Categories</a><a href="#why-us" className="hover:text-white">About</a><a href="#footer" className="hover:text-white">Contact</a></nav><div className="flex items-center justify-end gap-4"><a href="#footer" aria-label="Facebook" className="text-white"><Facebook className="h-4 w-4" /></a><a href="#footer" aria-label="Instagram" className="text-white"><Instagram className="h-4 w-4" /></a><a href="#footer" aria-label="YouTube" className="text-white"><Youtube className="h-4 w-4" /></a></div></div><div className="flex flex-col gap-3 py-3 text-[10px] text-slate-300 sm:flex-row sm:items-center sm:justify-between"><span>© 2026 Urban Shine. All rights reserved.</span><div className="flex gap-6"><a href="#footer">Privacy Policy</a><a href="#footer">Terms &amp; Conditions</a></div></div></div></footer>
