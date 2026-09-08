@@ -14,6 +14,7 @@ import CheckoutPage from "./pages/store/CheckoutPage";
 import Formulations from "./pages/Formulations";
 import FormulationDetail from "./pages/FormulationDetail";
 import ProductPrices from "./pages/ProductPrices";
+import StoreProducts from "./pages/StoreProducts";
 import PackingMaterials from "./pages/PackingMaterials";
 import ChemicalPrices from "./pages/ChemicalPrices";
 import IndentSheet from "./pages/IndentSheet";
@@ -75,6 +76,7 @@ const App = () => (
               <Route path="/invoice" element={<ProtectedRoute><Invoice /></ProtectedRoute>} />
               <Route path="/prices" element={<ProtectedRoute><ProductPrices /></ProtectedRoute>} />
               <Route path="/product-prices" element={<ProtectedRoute><ProductPrices /></ProtectedRoute>} />
+              <Route path="/store-products" element={<ProtectedRoute><StoreProducts /></ProtectedRoute>} />
               <Route path="/packing-materials" element={<ProtectedRoute><PackingMaterials /></ProtectedRoute>} />
               <Route path="/chemical-prices" element={<ProtectedRoute><ChemicalPrices /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
