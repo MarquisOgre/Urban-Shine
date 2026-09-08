@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import Storefront from "./pages/store/Storefront";
+import Storefront from "./pages/store/StorefrontManaged";
 import ProductPage from "./pages/store/ProductPage";
 import CartPage from "./pages/store/CartPage";
 import CheckoutPage from "./pages/store/CheckoutPage";
