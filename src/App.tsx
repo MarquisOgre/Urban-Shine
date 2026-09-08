@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
@@ -21,12 +21,21 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsAndConditions from "./pages/TermsAndConditions";
-
 import Invoice from "./pages/Invoice";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [pathname]);
+
+  return null;
+};
 
 const StorefrontFooterLinkRedirector = () => {
   const navigate = useNavigate();
@@ -60,16 +69,14 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <CartProvider>
+            <ScrollToTop />
             <StorefrontFooterLinkRedirector />
             <Routes>
-              {/* Public storefront */}
               <Route path="/" element={<Storefront />} />
               <Route path="/product/:slug" element={<ProductPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/login" element={<Login />} />
-
-              {/* Admin area (login required) */}
               <Route path="/formulations" element={<ProtectedRoute><Formulations /></ProtectedRoute>} />
               <Route path="/formulation/:slug" element={<ProtectedRoute><FormulationDetail /></ProtectedRoute>} />
               <Route path="/indent-sheet" element={<ProtectedRoute><IndentSheet /></ProtectedRoute>} />
