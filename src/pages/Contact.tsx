@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,10 +24,6 @@ const Contact = () => {
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Dashboard
             </Button>
-            
-            <div className="text-center flex-1">
-              <h1 className="text-3xl font-bold text-slate-800">Contact Us</h1>
-            </div>
           </div>
 
           {/* Contact Section */}
@@ -97,30 +92,12 @@ const Contact = () => {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-3 text-slate-700">
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
-                    Custom Formulation Development
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
-                    Quality Testing & Analysis
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
-                    Technical Support & Consultation
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
-                    Bulk Production Solutions
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
-                    Product Documentation
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
-                    Safety Data Sheets
-                  </li>
+                  <li className="flex items-center"><span className="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>Custom Formulation Development</li>
+                  <li className="flex items-center"><span className="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>Quality Testing & Analysis</li>
+                  <li className="flex items-center"><span className="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>Technical Support & Consultation</li>
+                  <li className="flex items-center"><span className="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>Bulk Production Solutions</li>
+                  <li className="flex items-center"><span className="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>Product Documentation</li>
+                  <li className="flex items-center"><span className="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>Safety Data Sheets</li>
                 </ul>
               </CardContent>
             </Card>
@@ -131,30 +108,12 @@ const Contact = () => {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-3 text-slate-700">
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-green-600 rounded-full mr-3"></span>
-                    20+ Years of Industry Experience
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-green-600 rounded-full mr-3"></span>
-                    Proven Track Record of Success
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-green-600 rounded-full mr-3"></span>
-                    Comprehensive Product Range
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-green-600 rounded-full mr-3"></span>
-                    Cost-Effective Solutions
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-green-600 rounded-full mr-3"></span>
-                    Reliable Customer Support
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-green-600 rounded-full mr-3"></span>
-                    Environmentally Conscious
-                  </li>
+                  <li className="flex items-center"><span className="w-2 h-2 bg-green-600 rounded-full mr-3"></span>20+ Years of Industry Experience</li>
+                  <li className="flex items-center"><span className="w-2 h-2 bg-green-600 rounded-full mr-3"></span>Proven Track Record of Success</li>
+                  <li className="flex items-center"><span className="w-2 h-2 bg-green-600 rounded-full mr-3"></span>Comprehensive Product Range</li>
+                  <li className="flex items-center"><span className="w-2 h-2 bg-green-600 rounded-full mr-3"></span>Cost-Effective Solutions</li>
+                  <li className="flex items-center"><span className="w-2 h-2 bg-green-600 rounded-full mr-3"></span>Reliable Customer Support</li>
+                  <li className="flex items-center"><span className="w-2 h-2 bg-green-600 rounded-full mr-3"></span>Environmentally Conscious</li>
                 </ul>
               </CardContent>
             </Card>
