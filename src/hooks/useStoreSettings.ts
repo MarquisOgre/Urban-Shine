@@ -87,6 +87,9 @@ const mapSettings = (data: any): StoreSettings => {
   return {
     ...DEFAULT_STORE_SETTINGS,
     ...raw,
+    phone: typeof raw.phone === "string" && raw.phone.trim() ? raw.phone : DEFAULT_STORE_SETTINGS.phone,
+    email: typeof raw.email === "string" && raw.email.trim() ? raw.email : DEFAULT_STORE_SETTINGS.email,
+    address: typeof raw.address === "string" && raw.address.trim() ? raw.address : DEFAULT_STORE_SETTINGS.address,
     freeShippingAbove: Number(raw.freeShippingAbove ?? DEFAULT_STORE_SETTINGS.freeShippingAbove),
     shippingFee: Number(raw.shippingFee ?? DEFAULT_STORE_SETTINGS.shippingFee),
     featuredSlugs: Array.isArray(raw.featuredSlugs) ? raw.featuredSlugs : DEFAULT_STORE_SETTINGS.featuredSlugs,
