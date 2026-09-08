@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, FileText, Beaker, ClipboardList, DollarSign, ShoppingBag, LogOut, Settings } from "lucide-react";
+import { Menu, FileText, Beaker, ClipboardList, DollarSign, ShoppingBag, LogOut, Settings, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
@@ -13,10 +13,11 @@ const MobileNav = () => {
     { to: "/invoice", label: "Invoice System", icon: FileText },
     { to: "/formulations", label: "Formulations", icon: Beaker },
     { to: "/product-prices", label: "Product Prices", icon: ShoppingBag },
+    { to: "/store-products", label: "Store Products", icon: Package },
     { to: "/packing-materials", label: "Packing Materials", icon: DollarSign },
     { to: "/chemical-prices", label: "Chemical Prices", icon: DollarSign },
     { to: "/indent-sheet", label: "Indent Sheet", icon: ClipboardList },
-    { to: "/settings", label: "Settings", icon: Settings },
+    { to: "/settings", label: "Store Settings", icon: Settings },
   ] : [];
 
   return <Sheet open={open} onOpenChange={setOpen}>
