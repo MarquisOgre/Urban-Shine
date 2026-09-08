@@ -18,6 +18,8 @@ import ChemicalPrices from "./pages/ChemicalPrices";
 import IndentSheet from "./pages/IndentSheet";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsAndConditions from "./pages/TermsAndConditions";
 
 import Invoice from "./pages/Invoice";
 import Login from "./pages/Login";
@@ -52,6 +54,8 @@ const App = () => (
               <Route path="/chemical-prices" element={<ProtectedRoute><ChemicalPrices /></ProtectedRoute>} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </CartProvider>
