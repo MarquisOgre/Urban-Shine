@@ -9,6 +9,7 @@ const ProductCard = ({ product }: { product: StoreProduct }) => {
   const { addItem } = useCart();
   const discount = product.mrp && product.mrp > product.price ? Math.round(((product.mrp - product.price) / product.mrp) * 100) : 0;
   const badge = discount >= 25 ? "BEST SELLER" : discount > 0 ? "POPULAR" : "NEW";
+  const image = product.imageUrl || getProductImage(product.slug);
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#dbe7ef] bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
@@ -18,7 +19,7 @@ const ProductCard = ({ product }: { product: StoreProduct }) => {
           <Heart className="h-4 w-4" />
         </button>
         <div className="flex h-56 items-center justify-center sm:h-60">
-          <img src={getProductImage(product.slug)} alt={`Urban Shine ${product.name}`} loading="lazy" width={700} height={700} className="h-full w-full object-contain transition duration-300 group-hover:scale-105" />
+          <img src={image} alt={`Urban Shine ${product.name}`} loading="lazy" width={700} height={700} className="h-full w-full object-contain transition duration-300 group-hover:scale-105" />
         </div>
       </Link>
       <div className="flex flex-1 flex-col px-4 pb-4 pt-2">
