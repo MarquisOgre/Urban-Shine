@@ -44,10 +44,10 @@ const StorefrontManaged = () => {
 
   return <div className="min-h-screen bg-white text-slate-900">
     <header className="sticky top-0 z-50 border-b border-slate-100 bg-white">
-      <div className="mx-auto flex h-[68px] max-w-[1530px] items-center gap-7 px-5 lg:px-10">
+      <div className="relative mx-auto flex h-[68px] max-w-[1530px] items-center px-5 lg:px-10">
         <button className="lg:hidden" aria-label="Menu"><span className="text-xl">☰</span></button>
         <a href="#home" className="flex shrink-0 items-center"><img src="/Logo.png" alt={settings.storeName} className="h-12 w-auto object-contain" /></a>
-        <nav className="hidden items-center gap-2 lg:flex">
+        <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-2 lg:flex">
           <a href="#home" className="rounded-full bg-[#edf5ff] px-5 py-2.5 text-sm font-black text-blue-700">Home</a>
           <button onClick={showAll} className="rounded-full px-4 py-2.5 text-sm font-bold text-[#092f59]">Products</button>
           <a href="#categories" className="rounded-full px-4 py-2.5 text-sm font-bold text-[#092f59]">Categories</a>
