@@ -37,45 +37,15 @@ const Storefront = () => {
   const [showAllProducts, setShowAllProducts] = useState(false);
 
   const featuredSlugs = ["floor-cleaner", "dish-wash", "copper-cleaning-liquid", "hand-wash"];
-  const featured = featuredSlugs
-    .map((slug) => products.find((p) => p.slug === slug))
-    .filter(Boolean) as typeof products;
-
+  const featured = featuredSlugs.map((slug) => products.find((p) => p.slug === slug)).filter(Boolean) as typeof products;
   const selectedCategory = categories.find(([title]) => title === activeCategory);
-  const visibleProducts = activeCategory && selectedCategory
-    ? products.filter((product) => selectedCategory[4].includes(product.slug as never))
-    : showAllProducts
-      ? products
-      : featured;
+  const visibleProducts = activeCategory && selectedCategory ? products.filter((product) => selectedCategory[4].includes(product.slug as never)) : showAllProducts ? products : featured;
 
-  const scrollToProducts = () => {
-    window.requestAnimationFrame(() => {
-      document.getElementById("products")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  };
-
-  const selectCategory = (title: string) => {
-    setShowAllProducts(false);
-    setActiveCategory((current) => current === title ? null : title);
-    scrollToProducts();
-  };
-
-  const showAll = () => {
-    setActiveCategory(null);
-    setShowAllProducts(true);
-    scrollToProducts();
-  };
-
-  const showBestSellers = () => {
-    setActiveCategory(null);
-    setShowAllProducts(false);
-    scrollToProducts();
-  };
-
-  const add = (product: (typeof products)[number]) => {
-    addItem({ slug: product.slug, name: product.name, uom: product.uom, price: product.price });
-    toast.success(`${product.name} added to cart`);
-  };
+  const scrollToProducts = () => window.requestAnimationFrame(() => document.getElementById("products")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  const selectCategory = (title: string) => { setShowAllProducts(false); setActiveCategory((current) => current === title ? null : title); scrollToProducts(); };
+  const showAll = () => { setActiveCategory(null); setShowAllProducts(true); scrollToProducts(); };
+  const showBestSellers = () => { setActiveCategory(null); setShowAllProducts(false); scrollToProducts(); };
+  const add = (product: (typeof products)[number]) => { addItem({ slug: product.slug, name: product.name, uom: product.uom, price: product.price }); toast.success(`${product.name} added to cart`); };
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
@@ -99,24 +69,19 @@ const Storefront = () => {
       </header>
 
       <main>
-        <section id="home" className="relative min-h-[560px] overflow-hidden bg-[#eaf7ff] sm:min-h-[600px] lg:min-h-[650px]">
-          <img src={heroImage} alt="Urban Shine cleaning products" className="absolute inset-0 h-full w-full object-cover object-center" />
-          <div className="absolute inset-y-0 left-0 w-[70%] bg-gradient-to-r from-[#eaf7ff]/95 via-[#eaf7ff]/75 to-transparent" />
-          <div className="absolute right-0 top-0 h-[45%] w-[18%] bg-gradient-to-l from-white/80 via-white/45 to-transparent" />
-          <div className="relative z-10 mx-auto min-h-[560px] max-w-[1530px] px-5 sm:min-h-[600px] lg:min-h-[650px] lg:px-10">
-            <div className="flex max-w-[650px] flex-col pt-10 sm:pt-14 lg:pt-20">
-              <img src="/Logo.png" alt="Urban Shine" className="mb-5 h-16 w-auto max-w-[300px] object-contain object-left sm:h-20" />
-              <p className="text-[10px] font-bold tracking-[0.22em] text-[#0b4b7f] sm:text-sm">A CLEANER • HEALTHIER • HAPPIER HOME</p>
-              <h1 className="mt-4 text-5xl font-black leading-[0.94] tracking-[-0.05em] text-[#073f76] sm:text-6xl lg:text-7xl">CLEAN HOME.<br /><span className="text-green-600">FRESH EVERY DAY.</span></h1>
-              <p className="mt-5 max-w-[560px] text-sm leading-6 text-[#3f5872] sm:text-base">High quality cleaning & personal care products made for modern homes — effective, affordable and reliable.</p>
-              <div className="mt-7 flex flex-wrap gap-4">
+        <section id="home" className="relative isolate h-[500px] overflow-hidden bg-[#eaf7ff] sm:h-[520px] lg:h-[540px]">
+          <img src={heroImage} alt="Urban Shine cleaning products" className="absolute inset-0 z-0 h-full w-full object-cover object-right" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-[57%] bg-gradient-to-r from-[#eaf7ff] via-[#eaf7ff]/96 via-[72%] to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 left-[38%] z-10 w-[22%] bg-gradient-to-r from-[#eaf7ff]/90 to-transparent" />
+          <div className="relative z-30 mx-auto h-full max-w-[1530px] px-5 lg:px-10">
+            <div className="flex h-full max-w-[600px] flex-col justify-center">
+              <p className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.24em] text-[#0b4b7f] sm:text-sm">A CLEANER • HEALTHIER • HAPPIER HOME</p>
+              <h1 className="text-5xl font-black leading-[0.95] tracking-[-0.05em] text-[#073f76] sm:text-6xl lg:text-[68px]">CLEAN HOME.<br /><span className="text-green-600">FRESH EVERY DAY.</span></h1>
+              <p className="mt-5 max-w-[520px] text-sm font-medium leading-6 text-[#3f5872] sm:text-base">High quality cleaning & personal care products made for modern homes — effective, affordable and reliable.</p>
+              <div className="mt-7 flex flex-wrap gap-3">
                 <button onClick={showAll} className="inline-flex h-12 items-center gap-2 rounded-lg bg-[#073f76] px-7 text-sm font-black text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#052f59]">Shop Products <ArrowRight className="h-4 w-4" /></button>
-                <a href="#categories" className="inline-flex h-12 items-center rounded-lg border-2 border-[#073f76] bg-white/95 px-7 text-sm font-black text-[#073f76] shadow-lg transition hover:-translate-y-0.5 hover:bg-white">Explore Categories</a>
+                <a href="#categories" className="inline-flex h-12 items-center rounded-lg border-2 border-[#073f76] bg-white px-7 text-sm font-black text-[#073f76] shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-50">Explore Categories</a>
               </div>
-            </div>
-            <div className="absolute right-[3%] top-[11%] hidden max-w-[190px] lg:block">
-              <p className="font-serif text-3xl font-bold italic leading-[1.08] text-green-800">Small Steps<br />for a Cleaner<br />Tomorrow.</p>
-              <div className="mt-3 h-1 w-28 -rotate-6 rounded-full bg-green-700" />
             </div>
           </div>
         </section>
@@ -125,9 +90,7 @@ const Storefront = () => {
 
         <section id="categories" className="mx-auto max-w-[1530px] px-5 py-9 lg:px-10">
           <div className="text-center"><h2 className="text-[29px] font-black tracking-[-.03em] text-[#092f59]">Shop by Category</h2><p className="mt-1 text-sm text-[#58708b]">Find the right product for every need</p></div>
-          <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-5">
-            {categories.map(([title, subtitle, slug, bg]) => { const active = activeCategory === title; return <button type="button" onClick={() => selectCategory(title)} key={title} className={`group rounded-xl border bg-white p-2.5 text-center shadow-[0_3px_14px_rgba(25,64,95,.04)] transition hover:-translate-y-1 hover:shadow-lg ${active ? "border-green-500 ring-2 ring-green-100" : "border-[#d9e5ef]"}`}><div className={`flex h-[150px] items-end justify-center overflow-hidden rounded-xl ${bg}`}><img src={getProductImage(slug)} alt={title} className="h-full w-full object-contain p-3 transition-transform duration-300 group-hover:scale-105" /></div><h3 className="mt-3 text-[13px] font-black text-[#092f59]">{title}</h3><p className="mt-1 min-h-8 text-[10px] leading-4 text-[#55708e]">{subtitle}</p><span className={`mt-2 inline-flex items-center gap-1 text-[10px] font-black ${active ? "text-green-700" : "text-blue-700"}`}>{active ? "Showing products" : "Shop now"} <ArrowRight className="h-3 w-3" /></span></button>; })}
-          </div>
+          <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-5">{categories.map(([title, subtitle, slug, bg]) => { const active = activeCategory === title; return <button type="button" onClick={() => selectCategory(title)} key={title} className={`group rounded-xl border bg-white p-2.5 text-center shadow-[0_3px_14px_rgba(25,64,95,.04)] transition hover:-translate-y-1 hover:shadow-lg ${active ? "border-green-500 ring-2 ring-green-100" : "border-[#d9e5ef]"}`}><div className={`flex h-[150px] items-end justify-center overflow-hidden rounded-xl ${bg}`}><img src={getProductImage(slug)} alt={title} className="h-full w-full object-contain p-3 transition-transform duration-300 group-hover:scale-105" /></div><h3 className="mt-3 text-[13px] font-black text-[#092f59]">{title}</h3><p className="mt-1 min-h-8 text-[10px] leading-4 text-[#55708e]">{subtitle}</p><span className={`mt-2 inline-flex items-center gap-1 text-[10px] font-black ${active ? "text-green-700" : "text-blue-700"}`}>{active ? "Showing products" : "Shop now"} <ArrowRight className="h-3 w-3" /></span></button>; })}</div>
         </section>
 
         <section id="products" className="scroll-mt-16 bg-[#f2f9ff] px-5 py-8 lg:px-10"><div className="mx-auto max-w-[1530px]"><div className="flex items-end justify-between gap-4"><div><h2 className="text-[29px] font-black tracking-[-.03em] text-[#092f59]">{activeCategory ? activeCategory : showAllProducts ? "All Products" : "Best Sellers"}</h2><p className="mt-1 text-sm text-[#58708b]">{activeCategory ? "Products in this category" : showAllProducts ? `${products.length} products available` : "Our most loved everyday essentials"}</p></div><div className="flex items-center gap-4">{activeCategory && <button onClick={showBestSellers} className="text-xs font-black text-green-700">← Show Best Sellers</button>}{!showAllProducts && <button onClick={showAll} className="hidden items-center gap-1 text-sm font-black text-blue-700 sm:flex">View All Products <ArrowRight className="h-4 w-4" /></button>}{showAllProducts && <button onClick={showBestSellers} className="text-sm font-black text-blue-700">Show Best Sellers</button>}</div></div>{visibleProducts.length > 0 ? <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{visibleProducts.map((product, index) => { const discount = product.mrp && product.mrp > product.price ? Math.round(((product.mrp - product.price) / product.mrp) * 100) : 0; const badge = activeCategory ? "CATEGORY" : showAllProducts ? "PRODUCT" : index === 3 ? "NEW" : index === 1 ? "POPULAR" : "BEST SELLER"; return <article key={product.id} className="overflow-hidden rounded-xl border border-[#dbe7f0] bg-white shadow-[0_3px_14px_rgba(25,64,95,.05)] transition hover:-translate-y-1 hover:shadow-lg"><div className="relative flex h-[205px] items-center justify-center bg-gradient-to-b from-white to-[#f8fbfd]"><span className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[9px] font-black text-white ${badge === "NEW" ? "bg-pink-500" : badge === "POPULAR" ? "bg-blue-600" : "bg-green-600"}`}>{badge}</span><button className="absolute right-3 top-3 rounded-full bg-white p-1.5 text-[#577594] shadow-sm" aria-label="Wishlist"><Heart className="h-4 w-4" /></button><img src={getProductImage(product.slug)} alt={product.name} className="h-[190px] w-[82%] object-contain transition-transform duration-300 hover:scale-105" /></div><div className="p-3.5"><h3 className="text-[13px] font-black text-[#092f59]">{product.name}</h3><p className="mt-0.5 text-[11px] text-[#607895]">{product.tagline}</p><div className="mt-2.5 flex flex-wrap items-center gap-1.5"><b className="text-[18px] text-[#092f59]">₹{product.price}</b>{discount > 0 && <span className="text-[10px] text-slate-400 line-through">₹{product.mrp}</span>}{discount > 0 && <span className="rounded-full bg-green-100 px-2 py-1 text-[9px] font-black text-green-700">{discount}% OFF</span>}</div><small className="text-[10px] text-slate-400">{product.uom}</small><button onClick={() => add(product)} className="mt-2.5 flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-[#073f76] text-xs font-black text-white shadow-sm"><ShoppingCart className="h-3.5 w-3.5" /> Add to Cart</button></div></article>; })}</div> : <div className="mt-5 rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center text-sm text-slate-500">No products found in this category yet.</div>}</div></section>
