@@ -46,9 +46,9 @@ export interface StoreSettings {
 export const DEFAULT_STORE_SETTINGS: StoreSettings = {
   storeName: "UltraShine",
   businessName: "UltraShine",
-  phone: "",
-  email: "",
-  address: "",
+  phone: "+91 98500 60 6000\n+91 70755 65500",
+  email: "info@shinesparkle.com\nsupport@shinesparkle.com",
+  address: "FLAT NO - 202, RK RESIDENCY\nHARITHA ROYAL CITY COLONY\nRAVALKOLE, MEDCHAL - 501401",
   gstNumber: "",
   upiId: "urbanshine@upi",
   upiPayeeName: "UltraShine",
