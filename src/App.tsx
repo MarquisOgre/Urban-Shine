@@ -2,7 +2,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -27,6 +28,30 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+const StorefrontFooterLinkRedirector = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleClick = (event: MouseEvent) => {
+      const element = event.target as HTMLElement | null;
+      const link = element?.closest('a[href="#footer"]') as HTMLAnchorElement | null;
+      if (!link) return;
+
+      const label = link.textContent?.trim();
+      const destination = label === "Contact" ? "/contact" : label === "Privacy Policy" ? "/privacy-policy" : label === "Terms & Conditions" ? "/terms-and-conditions" : null;
+      if (!destination) return;
+
+      event.preventDefault();
+      navigate(destination);
+    };
+
+    document.addEventListener("click", handleClick);
+    return () => document.removeEventListener("click", handleClick);
+  }, [navigate]);
+
+  return null;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -35,6 +60,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <CartProvider>
+            <StorefrontFooterLinkRedirector />
             <Routes>
               {/* Public storefront */}
               <Route path="/" element={<Storefront />} />
