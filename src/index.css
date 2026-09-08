@@ -42,11 +42,8 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 84% 4.9%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
@@ -67,25 +64,43 @@
 
 @layer base {
   * { @apply border-border; }
-  body { @apply bg-background text-foreground; }
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Segoe UI", Arial, sans-serif;
+  }
+  button,
+  input,
+  textarea,
+  select {
+    font-family: inherit;
+  }
 }
 
-/* Category cards: cleaner typography and larger product presentation */
-#categories > div:first-child h2 {
+/* Storefront typography: keep one consistent font throughout the storefront. */
+#categories > div:first-child h2,
+#categories > div:first-child p,
+#categories .grid > button h3,
+#categories .grid > button p,
+#categories .grid > button span,
+#products h2,
+#products p,
+#products article h3,
+#products article small,
+#products article button,
+#why-us h2,
+#why-us p,
+#why-us h3 {
   font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* Category cards: larger placeholder with product artwork displayed at 128%. */
+#categories > div:first-child h2 {
   font-weight: 700;
   letter-spacing: -0.025em;
 }
 
 #categories > div:first-child p {
-  font-family: "Segoe UI", Arial, sans-serif;
   font-weight: 400;
-}
-
-#categories .grid > button h3,
-#categories .grid > button p,
-#categories .grid > button span {
-  font-family: "Segoe UI", Arial, sans-serif;
 }
 
 #categories .grid > button h3 {
@@ -105,7 +120,7 @@
 }
 
 #categories .grid > button > div:first-child {
-  height: 220px;
+  height: 260px;
 }
 
 #categories .grid > button > div:first-child > img {
@@ -114,5 +129,18 @@
 }
 
 #categories .grid > button:hover > div:first-child > img {
+  transform: scale(1.32);
+}
+
+/* Best Sellers/product cards: increase the artwork placeholder and use 128% artwork scale. */
+#products article > div:first-child {
+  height: 250px;
+}
+
+#products article > div:first-child > img {
+  transform: scale(1.28);
+}
+
+#products article:hover > div:first-child > img {
   transform: scale(1.32);
 }
