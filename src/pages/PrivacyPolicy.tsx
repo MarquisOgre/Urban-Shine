@@ -8,10 +8,12 @@ const PrivacyPolicy = () => {
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <header className="border-b border-slate-100 bg-white">
         <div className="mx-auto flex h-[68px] max-w-[1100px] items-center justify-between px-5 lg:px-8">
+          <button onClick={() => navigate("/")} className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+            <img src="/Logo.png" alt="Urban Shine" className="h-12 w-auto object-contain" />
+          </button>
           <button onClick={() => navigate("/")} className="flex items-center gap-2 text-sm font-bold text-[#092f59] hover:text-green-600">
             <ArrowLeft className="h-4 w-4" /> Back to Urban Shine
           </button>
-          <span className="text-lg font-black text-[#092f59]">Urban <span className="text-green-600">Shine</span></span>
         </div>
       </header>
 
