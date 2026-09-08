@@ -105,7 +105,7 @@
 }
 
 #categories .grid > button > div:first-child {
-  height: 180px;
+  height: 220px;
 }
 
 #categories .grid > button > div:first-child > img {
@@ -114,5 +114,5 @@
 }
 
 #categories .grid > button:hover > div:first-child > img {
-  transform: scale(1.35);
+  transform: scale(1.32);
 }
