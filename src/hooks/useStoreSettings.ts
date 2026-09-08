@@ -109,6 +109,7 @@ export const useStoreSettings = () =>
       if (error) throw error;
       return mapSettings(data);
     },
+    initialData: DEFAULT_STORE_SETTINGS,
     staleTime: 60_000,
   });
 
