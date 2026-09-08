@@ -68,6 +68,15 @@
 @layer base {
   * { @apply border-border; }
   body { @apply bg-background text-foreground; }
+
+  /* Use Segoe UI consistently across the storefront/front page. */
+  #root,
+  #root button,
+  #root input,
+  #root textarea,
+  #root select {
+    font-family: "Segoe UI", Arial, sans-serif;
+  }
 }
 
 /* Storefront typography and product presentation */
