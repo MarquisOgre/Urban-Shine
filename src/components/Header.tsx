@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { LogOut, Settings } from "lucide-react";
+import { LogOut, Settings, Package } from "lucide-react";
 import MobileNav from "./MobileNav";
 
 const Header = () => {
@@ -11,7 +11,7 @@ const Header = () => {
 
   const items = [
     ["/invoice", "Invoice System"], ["/formulations", "Formulations"], ["/product-prices", "Product Prices"],
-    ["/packing-materials", "Packing Materials"], ["/chemical-prices", "Chemical Prices"], ["/indent-sheet", "Indent Sheet"],
+    ["/store-products", "Store Products"], ["/packing-materials", "Packing Materials"], ["/chemical-prices", "Chemical Prices"], ["/indent-sheet", "Indent Sheet"],
   ];
 
   return (
@@ -23,7 +23,7 @@ const Header = () => {
           </Link>
           {user ? <>
             <nav className="hidden md:flex space-x-2 lg:space-x-4 items-center">
-              {items.map(([to, label]) => <Link key={to} to={to} className="bg-white text-blue-600 font-semibold py-2 px-3 lg:px-4 rounded-lg shadow hover:bg-blue-100 transition-colors text-sm lg:text-base">{label}</Link>)}
+              {items.map(([to, label]) => <Link key={to} to={to} className="bg-white text-blue-600 font-semibold py-2 px-3 lg:px-4 rounded-lg shadow hover:bg-blue-100 transition-colors text-sm lg:text-base">{label === "Store Products" && <Package className="mr-1 inline h-4 w-4" />}{label}</Link>)}
               <Link to="/settings" className="inline-flex items-center gap-2 bg-white text-blue-600 font-semibold py-2 px-3 lg:px-4 rounded-lg shadow hover:bg-blue-100 transition-colors text-sm lg:text-base"><Settings className="h-4 w-4" /> Settings</Link>
               <Button variant="ghost" size="sm" onClick={handleLogout} className="text-white hover:bg-white/20"><LogOut className="h-4 w-4 mr-1" /> Logout</Button>
             </nav>
