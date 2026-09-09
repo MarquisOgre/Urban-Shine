@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import heroImage from "@/assets/hero.png";
+import promoBanner from "@/assets/promo-banner.png";
 
 export interface StoreCategory {
   title: string;
@@ -68,11 +70,11 @@ export const DEFAULT_STORE_SETTINGS: StoreSettings = {
   heroTitle: "CLEAN HOME.",
   heroTitleAccent: "FRESH EVERY DAY.",
   heroDescription: "High quality cleaning & personal care products made for modern homes — effective, affordable and reliable.",
-  heroImageUrl: "/hero.png",
+  heroImageUrl: heroImage,
   promoTitle: "Special Offers",
   promoDescription: "Shop everyday essentials at great prices.",
   promoButtonText: "Shop Products",
-  promoBannerImageUrl: "/promo-banner.png",
+  promoBannerImageUrl: promoBanner,
   footerLogoUrl: "/Logo.png",
   footerSubheading: "Quality cleaning & personal care products for modern homes.",
   footerAddress: "FLAT NO - 202, RK RESIDENCY\nHARITHA ROYAL CITY COLONY\nRAVALKOLE, MEDCHAL - 501401",
@@ -104,6 +106,14 @@ const SETTING_TYPE = "storefront";
 
 const mapSettings = (data: any): StoreSettings => {
   const raw = data?.setting_data ?? {};
+  const validImageUrl = (value: unknown, fallback: string) => {
+    if (typeof value !== "string" || !value.trim()) return fallback;
+    const trimmed = value.trim();
+    if (trimmed === "/hero.png" || trimmed === "hero.png") return heroImage;
+    if (trimmed === "/promo-banner.png" || trimmed === "promo-banner.png") return promoBanner;
+    return trimmed;
+  };
+
   return {
     ...DEFAULT_STORE_SETTINGS,
     ...raw,
@@ -111,8 +121,8 @@ const mapSettings = (data: any): StoreSettings => {
     email: typeof raw.email === "string" && raw.email.trim() ? raw.email : DEFAULT_STORE_SETTINGS.email,
     address: typeof raw.address === "string" && raw.address.trim() ? raw.address : DEFAULT_STORE_SETTINGS.address,
     footerAddress: typeof raw.footerAddress === "string" && raw.footerAddress.trim() ? raw.footerAddress : (typeof raw.address === "string" && raw.address.trim() ? raw.address : DEFAULT_STORE_SETTINGS.footerAddress),
-    heroImageUrl: typeof raw.heroImageUrl === "string" && raw.heroImageUrl.trim() ? raw.heroImageUrl : DEFAULT_STORE_SETTINGS.heroImageUrl,
-    promoBannerImageUrl: typeof raw.promoBannerImageUrl === "string" && raw.promoBannerImageUrl.trim() ? raw.promoBannerImageUrl : DEFAULT_STORE_SETTINGS.promoBannerImageUrl,
+    heroImageUrl: validImageUrl(raw.heroImageUrl, DEFAULT_STORE_SETTINGS.heroImageUrl),
+    promoBannerImageUrl: validImageUrl(raw.promoBannerImageUrl, DEFAULT_STORE_SETTINGS.promoBannerImageUrl),
     footerLogoUrl: typeof raw.footerLogoUrl === "string" && raw.footerLogoUrl.trim() ? raw.footerLogoUrl : DEFAULT_STORE_SETTINGS.footerLogoUrl,
     freeShippingAbove: Number(raw.freeShippingAbove ?? DEFAULT_STORE_SETTINGS.freeShippingAbove),
     shippingFee: Number(raw.shippingFee ?? DEFAULT_STORE_SETTINGS.shippingFee),
