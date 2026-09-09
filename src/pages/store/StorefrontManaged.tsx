@@ -24,6 +24,7 @@ const StorefrontManaged = () => {
 
   if (!settings) return <div className="min-h-screen flex items-center justify-center text-slate-500">Loading store…</div>;
 
+  const productBySlug = new Map(products.map((product) => [product.slug, product]));
   const featured = settings.featuredSlugs.map((slug) => products.find((p) => p.slug === slug)).filter(Boolean) as typeof products;
   const selectedCategory = settings.categories.find((c) => c.title === activeCategory);
   const filteredSearch = search.trim().toLowerCase();
