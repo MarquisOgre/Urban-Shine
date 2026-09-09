@@ -9,7 +9,6 @@ const Header = () => {
   const { user, signOut } = useAuth();
   const handleLogout = async () => { await signOut(); navigate("/"); };
 
-  // Rename the admin navigation labels here. Keep labels short so they stay on one line.
   const items = [
     ["/invoice", "Invoice"], ["/formulations", "Formulations"], ["/product-prices", "Products"],
     ["/store-products", "Stores"], ["/packing-materials", "Packing"], ["/chemical-prices", "Chemical"], ["/indent-sheet", "Indent"],
@@ -17,11 +16,11 @@ const Header = () => {
 
   return (
     <header className="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg sticky top-0 z-50">
-      <div className="w-full px-3 sm:px-5 lg:px-6 py-2 sm:py-3">
-        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 lg:gap-5">
-          <Link to="/" className="flex shrink-0 items-center hover:opacity-90 transition-opacity">
-            <div className="bg-white rounded-full p-1.5 sm:p-2 flex items-center justify-center">
-              <img src="/Logo.png" alt="Urban Shine Logo" className="h-16 w-auto sm:h-14 object-contain" />
+      <div className="w-full px-2.5 sm:px-5 lg:px-6 py-1.5 sm:py-3">
+        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-2 sm:gap-3 lg:gap-5">
+          <Link to="/" className="flex min-w-0 shrink-0 items-center hover:opacity-90 transition-opacity">
+            <div className="bg-white rounded-full p-1 sm:p-1.5 flex items-center justify-center">
+              <img src="/Logo.png" alt="Urban Shine Logo" className="h-10 w-auto sm:h-14 object-contain" />
             </div>
           </Link>
 
@@ -33,7 +32,6 @@ const Header = () => {
                   to={to}
                   className="inline-flex shrink-0 items-center justify-center whitespace-nowrap bg-white text-blue-600 font-semibold py-2 px-3 lg:px-3.5 rounded-lg shadow hover:bg-blue-100 transition-colors text-sm"
                 >
-                  {label === "Store Products" && <Package className="mr-1 inline h-4 w-4 shrink-0" />}
                   {label}
                 </Link>
               ))}
@@ -52,7 +50,7 @@ const Header = () => {
             </div>
             <MobileNav />
           </> : (
-            <Link to="/" className="justify-self-end bg-white text-blue-600 font-semibold py-2 px-4 rounded-lg shadow hover:bg-blue-100 transition-colors text-sm">
+            <Link to="/" className="justify-self-end whitespace-nowrap bg-white text-blue-600 font-semibold py-2 px-3 sm:px-4 rounded-lg shadow hover:bg-blue-100 transition-colors text-xs sm:text-sm">
               Back to Store
             </Link>
           )}
