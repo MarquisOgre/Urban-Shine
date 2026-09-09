@@ -1,5 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowDown, ArrowLeft, ArrowUp, Check, CreditCard, LayoutGrid, Plus, Save, Settings as SettingsIcon, Sparkles, Star, Store, Trash2, Truck } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowUp,
+  Check,
+  CreditCard,
+  LayoutGrid,
+  Leaf,
+  Plus,
+  Save,
+  Settings as SettingsIcon,
+  Shield,
+  Sparkles,
+  Star,
+  Store,
+  Trash2,
+  Truck,
+  ShoppingCart,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -11,7 +29,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
-import { DEFAULT_STORE_SETTINGS, useSaveStoreSettings, useStoreSettings, type StoreBenefit, type StoreCategory, type StoreSettings, type StoreWhyUs } from "@/hooks/useStoreSettings";
+import {
+  DEFAULT_STORE_SETTINGS,
+  useSaveStoreSettings,
+  useStoreSettings,
+  type StoreBenefit,
+  type StoreCategory,
+  type StoreSettings,
+  type StoreWhyUs,
+} from "@/hooks/useStoreSettings";
 import { useStoreProducts, type StoreProduct } from "@/hooks/useStoreProducts";
 import { getProductImage } from "@/data/productImages";
 
@@ -19,17 +45,117 @@ type CategoryDraft = StoreCategory & { id: string };
 type BenefitDraft = StoreBenefit & { id: string };
 type WhyUsDraft = StoreWhyUs & { id: string };
 
-const Field = ({ label, value, onChange, type = "text", placeholder }: { label: string; value: string; onChange: (value: string) => void; type?: string; placeholder?: string }) => <div className="space-y-2"><Label>{label}</Label><Input type={type} value={value} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} /></div>;
-const SelectField = ({ label, value, onChange, options }: { label: string; value: string; onChange: (value: string) => void; options: string[] }) => <div className="space-y-2"><Label>{label}</Label><select value={value} onChange={(e) => onChange(e.target.value)} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"><option value="">Select…</option>{options.map((option) => <option key={option} value={option}>{option}</option>)}</select></div>;
+type SelectFieldProps = {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: string[];
+  optionLabels?: Record<string, string>;
+};
+
+const Field = ({
+  label,
+  value,
+  onChange,
+  type = "text",
+  placeholder,
+  hint,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  type?: string;
+  placeholder?: string;
+  hint?: string;
+}) => (
+  <div className="space-y-2">
+    <Label>{label}</Label>
+    <Input type={type} value={value} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} />
+    {hint && <p className="text-xs text-slate-500">{hint}</p>}
+  </div>
+);
+
+const SelectField = ({ label, value, onChange, options, optionLabels }: SelectFieldProps) => (
+  <div className="space-y-2">
+    <Label>{label}</Label>
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+    >
+      <option value="">Select…</option>
+      {options.map((option) => (
+        <option key={option} value={option}>
+          {optionLabels?.[option] ?? option}
+        </option>
+      ))}
+    </select>
+  </div>
+);
 
 const categoryThemes: StoreCategory["theme"][] = ["blue", "green", "pink", "peach", "purple"];
 const benefitIcons: StoreBenefit["icon"][] = ["truck", "shield", "leaf", "cart"];
 const whyIcons: StoreWhyUs["icon"][] = ["shield", "sparkles", "check", "cart"];
 const whyThemes: StoreWhyUs["theme"][] = ["green", "blue", "amber", "pink"];
+
+const benefitIconLabels: Record<StoreBenefit["icon"], string> = {
+  truck: "Delivery",
+  shield: "Quality / Shield",
+  leaf: "Leaf / Gentle",
+  cart: "Shopping Cart",
+};
+
+const whyIconLabels: Record<StoreWhyUs["icon"], string> = {
+  shield: "Shield",
+  sparkles: "Sparkles",
+  check: "Check",
+  cart: "Shopping Cart",
+};
+
+const themeLabels: Record<string, string> = {
+  blue: "Blue",
+  green: "Green",
+  pink: "Pink",
+  peach: "Peach",
+  purple: "Purple",
+  amber: "Amber",
+};
+
 const makeId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 const cloneCategories = (items: StoreCategory[]): CategoryDraft[] => items.map((item) => ({ ...item, productSlugs: [...item.productSlugs], id: makeId() }));
 const cloneBenefits = (items: StoreBenefit[]): BenefitDraft[] => items.map((item) => ({ ...item, id: makeId() }));
 const cloneWhyUs = (items: StoreWhyUs[]): WhyUsDraft[] => items.map((item) => ({ ...item, id: makeId() }));
+
+const moveItem = <T,>(items: T[], index: number, direction: -1 | 1) => {
+  const next = [...items];
+  const target = index + direction;
+  if (target < 0 || target >= next.length) return items;
+  [next[index], next[target]] = [next[target], next[index]];
+  return next;
+};
+
+const iconForBenefit = (icon: StoreBenefit["icon"]) => {
+  if (icon === "truck") return Truck;
+  if (icon === "shield") return Shield;
+  if (icon === "leaf") return Leaf;
+  return ShoppingCart;
+};
+
+const iconForWhy = (icon: StoreWhyUs["icon"]) => {
+  if (icon === "shield") return Shield;
+  if (icon === "sparkles") return Sparkles;
+  if (icon === "check") return Check;
+  return ShoppingCart;
+};
+
+const themeClasses: Record<string, string> = {
+  blue: "bg-blue-50 border-blue-200 text-blue-800",
+  green: "bg-green-50 border-green-200 text-green-800",
+  pink: "bg-pink-50 border-pink-200 text-pink-800",
+  peach: "bg-orange-50 border-orange-200 text-orange-800",
+  purple: "bg-purple-50 border-purple-200 text-purple-800",
+  amber: "bg-amber-50 border-amber-200 text-amber-800",
+};
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -37,52 +163,438 @@ const Settings = () => {
   const { data, isLoading } = useStoreSettings();
   const { data: products = [], isLoading: productsLoading } = useStoreProducts();
   const saveSettings = useSaveStoreSettings();
+
   const [form, setForm] = useState<StoreSettings>(DEFAULT_STORE_SETTINGS);
   const [featured, setFeatured] = useState<string[]>(DEFAULT_STORE_SETTINGS.featuredSlugs);
   const [categories, setCategories] = useState<CategoryDraft[]>(cloneCategories(DEFAULT_STORE_SETTINGS.categories));
   const [benefits, setBenefits] = useState<BenefitDraft[]>(cloneBenefits(DEFAULT_STORE_SETTINGS.benefits));
   const [whyUs, setWhyUs] = useState<WhyUsDraft[]>(cloneWhyUs(DEFAULT_STORE_SETTINGS.whyUs));
 
-  useEffect(() => { if (!data) return; setForm(data); setFeatured([...data.featuredSlugs]); setCategories(cloneCategories(data.categories)); setBenefits(cloneBenefits(data.benefits)); setWhyUs(cloneWhyUs(data.whyUs)); }, [data]);
-  useEffect(() => { if (!authLoading && !user) navigate("/login", { replace: true }); }, [authLoading, user, navigate]);
-  const productBySlug = useMemo(() => new Map(products.map((p) => [p.slug, p])), [products]);
-  const set = <K extends keyof StoreSettings>(key: K, value: StoreSettings[K]) => setForm((current) => ({ ...current, [key]: value }));
-  const toggleFeatured = (slug: string) => setFeatured((current) => current.includes(slug) ? current.filter((item) => item !== slug) : [...current, slug]);
-  const addCategory = () => setCategories((current) => [...current, { id: makeId(), title: "New Category", subtitle: "Add a short description", imageSlug: products[0]?.slug ?? "", theme: "blue", productSlugs: [] }]);
-  const updateCategory = (id: string, patch: Partial<CategoryDraft>) => setCategories((current) => current.map((item) => item.id === id ? { ...item, ...patch } : item));
-  const toggleCategoryProduct = (id: string, slug: string) => setCategories((current) => current.map((item) => item.id !== id ? item : { ...item, productSlugs: item.productSlugs.includes(slug) ? item.productSlugs.filter((s) => s !== slug) : [...item.productSlugs, slug] }));
-  const addBenefit = () => setBenefits((current) => [...current, { id: makeId(), icon: "truck", title: "New Benefit", subtitle: "Add a short subtitle" }]);
-  const updateBenefit = (id: string, patch: Partial<BenefitDraft>) => setBenefits((current) => current.map((item) => item.id === id ? { ...item, ...patch } : item));
-  const addWhyUs = () => setWhyUs((current) => [...current, { id: makeId(), icon: "check", title: "New Reason", description: "Add a short description", theme: "blue" }]);
-  const updateWhyUs = (id: string, patch: Partial<WhyUsDraft>) => setWhyUs((current) => current.map((item) => item.id === id ? { ...item, ...patch } : item));
+  useEffect(() => {
+    if (!data) return;
+    setForm(data);
+    setFeatured([...data.featuredSlugs]);
+    setCategories(cloneCategories(data.categories));
+    setBenefits(cloneBenefits(data.benefits));
+    setWhyUs(cloneWhyUs(data.whyUs));
+  }, [data]);
+
+  useEffect(() => {
+    if (!authLoading && !user) navigate("/login", { replace: true });
+  }, [authLoading, user, navigate]);
+
+  const productBySlug = useMemo(() => new Map(products.map((product) => [product.slug, product])), [products]);
+  const set = <K extends keyof StoreSettings>(key: K, value: StoreSettings[K]) => {
+    setForm((current) => ({ ...current, [key]: value }));
+  };
+
+  const toggleFeatured = (slug: string) => {
+    setFeatured((current) => (current.includes(slug) ? current.filter((item) => item !== slug) : [...current, slug]));
+  };
+
+  const addCategory = () => {
+    setCategories((current) => [
+      ...current,
+      {
+        id: makeId(),
+        title: "New Category",
+        subtitle: "Add a short description",
+        imageSlug: products[0]?.slug ?? "",
+        theme: "blue",
+        productSlugs: [],
+      },
+    ]);
+  };
+
+  const updateCategory = (id: string, patch: Partial<CategoryDraft>) => {
+    setCategories((current) => current.map((item) => (item.id === id ? { ...item, ...patch } : item)));
+  };
+
+  const toggleCategoryProduct = (id: string, slug: string) => {
+    setCategories((current) =>
+      current.map((item) =>
+        item.id !== id
+          ? item
+          : {
+              ...item,
+              productSlugs: item.productSlugs.includes(slug)
+                ? item.productSlugs.filter((value) => value !== slug)
+                : [...item.productSlugs, slug],
+            },
+      ),
+    );
+  };
+
+  const addBenefit = () => {
+    setBenefits((current) => [...current, { id: makeId(), icon: "truck", title: "New Benefit", subtitle: "Add a short subtitle" }]);
+  };
+
+  const updateBenefit = (id: string, patch: Partial<BenefitDraft>) => {
+    setBenefits((current) => current.map((item) => (item.id === id ? { ...item, ...patch } : item)));
+  };
+
+  const addWhyUs = () => {
+    setWhyUs((current) => [...current, { id: makeId(), icon: "check", title: "New Reason", description: "Add a short description", theme: "blue" }]);
+  };
+
+  const updateWhyUs = (id: string, patch: Partial<WhyUsDraft>) => {
+    setWhyUs((current) => current.map((item) => (item.id === id ? { ...item, ...patch } : item)));
+  };
+
   const save = async () => {
     if (!form.storeName.trim()) return toast.error("Store name is required");
     if (!form.upiId.trim()) return toast.error("UPI ID is required");
     if (form.freeShippingAbove < 0 || form.shippingFee < 0) return toast.error("Shipping values cannot be negative");
-    if (categories.some((c) => !c.title.trim() || !c.imageSlug)) return toast.error("Every category needs a title and image");
+    if (categories.some((category) => !category.title.trim() || !category.imageSlug)) return toast.error("Every category needs a title and image");
     if (featured.some((slug) => !productBySlug.has(slug))) return toast.error("Featured products contain an unavailable product");
+
     const cleanCategories = categories.map(({ id: _id, ...item }) => ({ ...item, title: item.title.trim(), subtitle: item.subtitle.trim() }));
     const cleanBenefits = benefits.map(({ id: _id, ...item }) => ({ ...item, title: item.title.trim(), subtitle: item.subtitle.trim() }));
     const cleanWhyUs = whyUs.map(({ id: _id, ...item }) => ({ ...item, title: item.title.trim(), description: item.description.trim() }));
-    try {
-      await saveSettings.mutateAsync({ ...form, storeName: form.storeName.trim(), businessName: form.businessName.trim(), phone: form.phone.trim(), email: form.email.trim(), address: form.address.trim(), gstNumber: form.gstNumber.trim(), upiId: form.upiId.trim(), upiPayeeName: form.upiPayeeName.trim(), heroEyebrow: form.heroEyebrow.trim(), heroTitle: form.heroTitle.trim(), heroTitleAccent: form.heroTitleAccent.trim(), heroDescription: form.heroDescription.trim(), freeShippingAbove: Number(form.freeShippingAbove) || 0, shippingFee: Number(form.shippingFee) || 0, featuredSlugs: featured, categories: cleanCategories, benefits: cleanBenefits, whyUs: cleanWhyUs });
-      toast.success("Store manager changes saved");
-    } catch (error: any) { toast.error(error?.message ?? "Could not save store settings"); }
-  };
-  if (authLoading || !user || isLoading) return <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-500">Loading store manager…</div>;
 
-  return <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50"><Header /><main className="px-4 py-8 sm:px-6"><div className="mx-auto max-w-7xl">
-    <div className="mb-6 flex flex-wrap items-center justify-between gap-4"><div><Button variant="outline" onClick={() => navigate("/")} className="mb-4"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Store</Button><h1 className="flex items-center gap-3 text-3xl font-bold text-slate-800"><SettingsIcon className="h-8 w-8 text-blue-600" /> Visual Store Manager</h1><p className="mt-1 text-slate-600">Manage what customers see without editing JSON or frontend code.</p></div><div className="flex gap-2"><Button variant="outline" onClick={() => navigate("/store-products")}>Manage Products</Button><Button onClick={save} disabled={saveSettings.isPending} className="gap-2 bg-blue-600 hover:bg-blue-700"><Save className="h-4 w-4" />{saveSettings.isPending ? "Saving…" : "Save Store"}</Button></div></div>
-    <Tabs defaultValue="business" className="w-full">
-      <div className="mb-5 overflow-x-auto rounded-xl border border-slate-200 bg-white p-2 shadow-sm"><TabsList className="h-auto w-full justify-start gap-1 bg-transparent p-0 md:grid md:grid-cols-7"><TabsTrigger value="business" className="gap-2 px-4 py-3 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700"><Store className="h-4 w-4" /> Business</TabsTrigger><TabsTrigger value="hero" className="gap-2 px-4 py-3 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700"><Sparkles className="h-4 w-4" /> Homepage</TabsTrigger><TabsTrigger value="payments" className="gap-2 px-4 py-3 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700"><CreditCard className="h-4 w-4" /> Payments</TabsTrigger><TabsTrigger value="featured" className="gap-2 px-4 py-3 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700"><Star className="h-4 w-4" /> Featured</TabsTrigger><TabsTrigger value="categories" className="gap-2 px-4 py-3 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700"><LayoutGrid className="h-4 w-4" /> Categories</TabsTrigger><TabsTrigger value="benefits" className="gap-2 px-4 py-3 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700"><Truck className="h-4 w-4" /> Benefits</TabsTrigger><TabsTrigger value="why" className="gap-2 px-4 py-3 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700"><Check className="h-4 w-4" /> Why Us</TabsTrigger></TabsList></div>
-      <TabsContent value="business"><Card><CardHeader><CardTitle className="flex items-center gap-2"><Store className="h-5 w-5 text-blue-600" /> Business Information</CardTitle></CardHeader><CardContent className="grid gap-5 sm:grid-cols-2"><Field label="Store Name" value={form.storeName} onChange={(v) => set("storeName", v)} /><Field label="Business / Legal Name" value={form.businessName} onChange={(v) => set("businessName", v)} /><Field label="Phone" value={form.phone} onChange={(v) => set("phone", v)} /><Field label="Email" type="email" value={form.email} onChange={(v) => set("email", v)} /><div className="space-y-2 sm:col-span-2"><Label>Business Address</Label><Textarea value={form.address} onChange={(e) => set("address", e.target.value)} /></div><Field label="GST Number" value={form.gstNumber} onChange={(v) => set("gstNumber", v)} /></CardContent></Card></TabsContent>
-      <TabsContent value="hero"><Card><CardHeader><CardTitle>Homepage Hero</CardTitle></CardHeader><CardContent className="space-y-5"><Field label="Eyebrow" value={form.heroEyebrow} onChange={(v) => set("heroEyebrow", v)} /><div className="grid gap-5 sm:grid-cols-2"><Field label="Main Title" value={form.heroTitle} onChange={(v) => set("heroTitle", v)} /><Field label="Accent Title" value={form.heroTitleAccent} onChange={(v) => set("heroTitleAccent", v)} /></div><div className="space-y-2"><Label>Hero Description</Label><Textarea value={form.heroDescription} onChange={(e) => set("heroDescription", e.target.value)} /></div></CardContent></Card></TabsContent>
-      <TabsContent value="payments"><div className="grid gap-6 lg:grid-cols-2"><Card><CardHeader><CardTitle className="flex items-center gap-2"><CreditCard className="h-5 w-5 text-green-600" /> UPI Payment</CardTitle></CardHeader><CardContent className="space-y-5"><Field label="UPI ID" value={form.upiId} onChange={(v) => set("upiId", v)} placeholder="yourname@upi" /><Field label="UPI Payee Name" value={form.upiPayeeName} onChange={(v) => set("upiPayeeName", v)} /></CardContent></Card><Card><CardHeader><CardTitle className="flex items-center gap-2"><Truck className="h-5 w-5 text-orange-600" /> Shipping</CardTitle></CardHeader><CardContent className="grid gap-5 sm:grid-cols-2"><Field label="Free Shipping Above (₹)" type="number" value={String(form.freeShippingAbove)} onChange={(v) => set("freeShippingAbove", Number(v))} /><Field label="Shipping Fee (₹)" type="number" value={String(form.shippingFee)} onChange={(v) => set("shippingFee", Number(v))} /></CardContent></Card></div></TabsContent>
-      <TabsContent value="featured"><Card><CardHeader><CardTitle className="flex items-center gap-2"><Star className="h-5 w-5 text-amber-500" /> Featured Products</CardTitle><p className="text-sm text-slate-500">Select products and use the arrows to control the Best Sellers order.</p></CardHeader><CardContent>{productsLoading ? <p className="text-sm text-slate-500">Loading products…</p> : products.length === 0 ? <p className="text-sm text-slate-500">Add products first from Manage Products.</p> : <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{products.map((product: StoreProduct) => { const index = featured.indexOf(product.slug); const selected = index >= 0; return <div key={product.id} className={`flex items-center gap-3 rounded-xl border p-3 ${selected ? "border-blue-400 bg-blue-50" : "border-slate-200 bg-white"}`}><input type="checkbox" checked={selected} onChange={() => toggleFeatured(product.slug)} className="h-4 w-4" /><img src={product.imageUrl || getProductImage(product.slug)} alt="" className="h-14 w-14 rounded-lg bg-white object-contain p-1" /><div className="min-w-0 flex-1"><p className="truncate text-sm font-black text-slate-800">{product.name}</p><p className="text-xs text-slate-500">{product.uom} · ₹{product.price.toFixed(2)}</p></div>{selected && <div className="flex gap-1"><Button variant="ghost" size="icon" disabled={index === 0} onClick={() => { const next = [...featured]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; setFeatured(next); }}><ArrowUp className="h-4 w-4" /></Button><Button variant="ghost" size="icon" disabled={index === featured.length - 1} onClick={() => { const next = [...featured]; [next[index], next[index + 1]] = [next[index + 1], next[index]]; setFeatured(next); }}><ArrowDown className="h-4 w-4" /></Button></div>}</div>; })}</div>}</CardContent></Card></TabsContent>
-      <TabsContent value="categories"><div className="space-y-4"><div className="flex items-center justify-between"><div><h2 className="text-xl font-bold text-slate-800">Categories</h2><p className="text-sm text-slate-500">Control category order, image, theme and included products.</p></div><Button onClick={addCategory} className="gap-2"><Plus className="h-4 w-4" /> Add Category</Button></div>{categories.map((category, index) => <Card key={category.id}><CardHeader><CardTitle className="flex items-center justify-between"><span>Category {index + 1}</span><div className="flex gap-1"><Button variant="ghost" size="icon" disabled={index === 0} onClick={() => setCategories((current) => { const next = [...current]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; return next; })}><ArrowUp className="h-4 w-4" /></Button><Button variant="ghost" size="icon" disabled={index === categories.length - 1} onClick={() => setCategories((current) => { const next = [...current]; [next[index], next[index + 1]] = [next[index + 1], next[index]]; return next; })}><ArrowDown className="h-4 w-4" /></Button><Button variant="ghost" size="icon" onClick={() => setCategories((current) => current.filter((item) => item.id !== category.id))}><Trash2 className="h-4 w-4 text-red-500" /></Button></div></CardTitle></CardHeader><CardContent className="space-y-5"><div className="grid gap-5 md:grid-cols-3"><Field label="Title" value={category.title} onChange={(v) => updateCategory(category.id, { title: v })} /><Field label="Subtitle" value={category.subtitle} onChange={(v) => updateCategory(category.id, { subtitle: v })} /><SelectField label="Theme" value={category.theme} onChange={(v) => updateCategory(category.id, { theme: v as StoreCategory["theme"] })} options={categoryThemes} /></div><div className="grid gap-5 md:grid-cols-2"><SelectField label="Category Image" value={category.imageSlug} onChange={(v) => updateCategory(category.id, { imageSlug: v })} options={products.map((p) => p.slug)} /><div className="flex items-end gap-3 rounded-lg border bg-slate-50 p-3"><img src={getProductImage(category.imageSlug)} alt="" className="h-16 w-16 rounded bg-white object-contain p-1" /><div><p className="text-sm font-semibold">Preview</p><p className="text-xs text-slate-500">{category.imageSlug || "No image selected"}</p></div></div></div><div><Label>Products in this category</Label><div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">{products.map((product) => <label key={product.id} className={`flex cursor-pointer items-center gap-2 rounded-lg border p-2 ${category.productSlugs.includes(product.slug) ? "border-blue-400 bg-blue-50" : "border-slate-200"}`}><input type="checkbox" checked={category.productSlugs.includes(product.slug)} onChange={() => toggleCategoryProduct(category.id, product.slug)} /><img src={product.imageUrl || getProductImage(product.slug)} alt="" className="h-9 w-9 object-contain" /><span className="truncate text-xs font-medium">{product.name}</span></label>)}</div></div></CardContent></Card>)}</div></TabsContent>
-      <TabsContent value="benefits"><Card><CardHeader><CardTitle className="flex items-center justify-between"><span>Benefits Strip</span><Button onClick={addBenefit} size="sm" className="gap-2"><Plus className="h-4 w-4" /> Add Benefit</Button></CardTitle><p className="text-sm text-slate-500">These appear below the homepage hero.</p></CardHeader><CardContent className="space-y-3">{benefits.map((item, index) => <div key={item.id} className="grid items-end gap-3 rounded-xl border p-4 md:grid-cols-[1fr_1.5fr_1.5fr_auto]"><SelectField label="Icon" value={item.icon} onChange={(v) => updateBenefit(item.id, { icon: v as StoreBenefit["icon"] })} options={benefitIcons} /><Field label="Title" value={item.title} onChange={(v) => updateBenefit(item.id, { title: v })} /><Field label="Subtitle" value={item.subtitle} onChange={(v) => updateBenefit(item.id, { subtitle: v })} /><div className="flex gap-1"><Button variant="ghost" size="icon" disabled={index === 0} onClick={() => setBenefits((current) => { const next = [...current]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; return next; })}><ArrowUp className="h-4 w-4" /></Button><Button variant="ghost" size="icon" disabled={index === benefits.length - 1} onClick={() => setBenefits((current) => { const next = [...current]; [next[index], next[index + 1]] = [next[index + 1], next[index]]; return next; })}><ArrowDown className="h-4 w-4" /></Button><Button variant="ghost" size="icon" onClick={() => setBenefits((current) => current.filter((x) => x.id !== item.id))}><Trash2 className="h-4 w-4 text-red-500" /></Button></div></div>)}</CardContent></Card></TabsContent>
-      <TabsContent value="why"><Card><CardHeader><CardTitle className="flex items-center justify-between"><span>Why Choose Us</span><Button onClick={addWhyUs} size="sm" className="gap-2"><Plus className="h-4 w-4" /> Add Reason</Button></CardTitle></CardHeader><CardContent className="space-y-3">{whyUs.map((item, index) => <div key={item.id} className="grid gap-3 rounded-xl border p-4 md:grid-cols-[1fr_1fr_1fr_2fr_auto]"><SelectField label="Icon" value={item.icon} onChange={(v) => updateWhyUs(item.id, { icon: v as StoreWhyUs["icon"] })} options={whyIcons} /><SelectField label="Theme" value={item.theme} onChange={(v) => updateWhyUs(item.id, { theme: v as StoreWhyUs["theme"] })} options={whyThemes} /><Field label="Title" value={item.title} onChange={(v) => updateWhyUs(item.id, { title: v })} /><Field label="Description" value={item.description} onChange={(v) => updateWhyUs(item.id, { description: v })} /><div className="flex items-end gap-1"><Button variant="ghost" size="icon" disabled={index === 0} onClick={() => setWhyUs((current) => { const next = [...current]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; return next; })}><ArrowUp className="h-4 w-4" /></Button><Button variant="ghost" size="icon" disabled={index === whyUs.length - 1} onClick={() => setWhyUs((current) => { const next = [...current]; [next[index], next[index + 1]] = [next[index + 1], next[index]]; return next; })}><ArrowDown className="h-4 w-4" /></Button><Button variant="ghost" size="icon" onClick={() => setWhyUs((current) => current.filter((x) => x.id !== item.id))}><Trash2 className="h-4 w-4 text-red-500" /></Button></div></div>)}</CardContent></Card></TabsContent>
-    </Tabs>
-  </div></main><Footer /></div>;
+    try {
+      await saveSettings.mutateAsync({
+        ...form,
+        storeName: form.storeName.trim(),
+        businessName: form.businessName.trim(),
+        phone: form.phone.trim(),
+        email: form.email.trim(),
+        address: form.address.trim(),
+        gstNumber: form.gstNumber.trim(),
+        upiId: form.upiId.trim(),
+        upiPayeeName: form.upiPayeeName.trim(),
+        heroEyebrow: form.heroEyebrow.trim(),
+        heroTitle: form.heroTitle.trim(),
+        heroTitleAccent: form.heroTitleAccent.trim(),
+        heroDescription: form.heroDescription.trim(),
+        freeShippingAbove: Number(form.freeShippingAbove) || 0,
+        shippingFee: Number(form.shippingFee) || 0,
+        featuredSlugs: featured,
+        categories: cleanCategories,
+        benefits: cleanBenefits,
+        whyUs: cleanWhyUs,
+      });
+      toast.success("Store manager changes saved");
+    } catch (error: any) {
+      toast.error(error?.message ?? "Could not save store settings");
+    }
+  };
+
+  if (authLoading || !user || isLoading) {
+    return <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-500">Loading store manager…</div>;
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-50">
+      <Header />
+
+      <main className="px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl space-y-6">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex items-start gap-4">
+                <Button variant="outline" size="icon" onClick={() => navigate("/")} title="Back to Store" className="mt-1 shrink-0">
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <div className="rounded-xl bg-blue-50 p-2 text-blue-700">
+                      <SettingsIcon className="h-5 w-5" />
+                    </div>
+                    <h1 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">Visual Store Manager</h1>
+                  </div>
+                  <p className="mt-2 text-sm text-slate-500 sm:text-base">Control your storefront visually. No JSON or frontend code required.</p>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" onClick={() => navigate("/store-products")}>
+                  Manage Products
+                </Button>
+                <Button onClick={save} disabled={saveSettings.isPending} className="gap-2 bg-blue-600 hover:bg-blue-700">
+                  <Save className="h-4 w-4" />
+                  {saveSettings.isPending ? "Saving…" : "Save Store"}
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <Tabs defaultValue="business" className="w-full">
+            <div className="sticky top-2 z-20 overflow-x-auto rounded-2xl border border-slate-200 bg-white/95 p-2 shadow-sm backdrop-blur">
+              <TabsList className="grid h-auto min-w-[760px] grid-cols-7 gap-1 bg-slate-100 p-1">
+                <TabsTrigger value="business" className="gap-2 py-3 data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm">
+                  <Store className="h-4 w-4" /> Business
+                </TabsTrigger>
+                <TabsTrigger value="homepage" className="gap-2 py-3 data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm">
+                  <Sparkles className="h-4 w-4" /> Homepage
+                </TabsTrigger>
+                <TabsTrigger value="payments" className="gap-2 py-3 data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm">
+                  <CreditCard className="h-4 w-4" /> Payments
+                </TabsTrigger>
+                <TabsTrigger value="featured" className="gap-2 py-3 data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm">
+                  <Star className="h-4 w-4" /> Featured
+                </TabsTrigger>
+                <TabsTrigger value="categories" className="gap-2 py-3 data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm">
+                  <LayoutGrid className="h-4 w-4" /> Categories
+                </TabsTrigger>
+                <TabsTrigger value="benefits" className="gap-2 py-3 data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm">
+                  <Truck className="h-4 w-4" /> Benefits
+                </TabsTrigger>
+                <TabsTrigger value="why" className="gap-2 py-3 data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm">
+                  <Check className="h-4 w-4" /> Why Us
+                </TabsTrigger>
+              </TabsList>
+            </div>
+
+            <TabsContent value="business" className="mt-5">
+              <Card className="overflow-hidden">
+                <CardHeader className="border-b bg-gradient-to-r from-blue-50 to-white">
+                  <CardTitle className="flex items-center gap-3">
+                    <span className="rounded-xl bg-blue-100 p-2 text-blue-700"><Store className="h-5 w-5" /></span>
+                    Business Information
+                  </CardTitle>
+                  <p className="text-sm text-slate-500">These details are used across your storefront, contact page, checkout and footer.</p>
+                </CardHeader>
+                <CardContent className="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
+                  <Field label="Store Name" value={form.storeName} onChange={(value) => set("storeName", value)} />
+                  <Field label="Business / Legal Name" value={form.businessName} onChange={(value) => set("businessName", value)} />
+                  <div className="space-y-2">
+                    <Label>Phone</Label>
+                    <Textarea value={form.phone} onChange={(e) => set("phone", e.target.value)} className="min-h-24" placeholder="One phone number per line" />
+                    <p className="text-xs text-slate-500">Use a new line for each phone number.</p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Email</Label>
+                    <Textarea value={form.email} onChange={(e) => set("email", e.target.value)} className="min-h-24" placeholder="One email address per line" />
+                    <p className="text-xs text-slate-500">Use a new line for each email address.</p>
+                  </div>
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label>Business Address</Label>
+                    <Textarea value={form.address} onChange={(e) => set("address", e.target.value)} className="min-h-28" placeholder="Enter your complete business address" />
+                  </div>
+                  <Field label="GST Number" value={form.gstNumber} onChange={(value) => set("gstNumber", value)} placeholder="Optional" />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="homepage" className="mt-5">
+              <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
+                <Card>
+                  <CardHeader className="border-b bg-gradient-to-r from-purple-50 to-white">
+                    <CardTitle className="flex items-center gap-3"><span className="rounded-xl bg-purple-100 p-2 text-purple-700"><Sparkles className="h-5 w-5" /></span>Homepage Hero</CardTitle>
+                    <p className="text-sm text-slate-500">Edit the main message customers see when they open the store.</p>
+                  </CardHeader>
+                  <CardContent className="space-y-5 p-5 sm:p-6">
+                    <Field label="Eyebrow" value={form.heroEyebrow} onChange={(value) => set("heroEyebrow", value)} />
+                    <div className="grid gap-5 sm:grid-cols-2">
+                      <Field label="Main Title" value={form.heroTitle} onChange={(value) => set("heroTitle", value)} />
+                      <Field label="Accent Title" value={form.heroTitleAccent} onChange={(value) => set("heroTitleAccent", value)} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Hero Description</Label>
+                      <Textarea value={form.heroDescription} onChange={(e) => set("heroDescription", e.target.value)} className="min-h-32" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="overflow-hidden">
+                  <CardHeader><CardTitle>Live Preview</CardTitle><p className="text-sm text-slate-500">A quick preview of the hero copy.</p></CardHeader>
+                  <CardContent>
+                    <div className="min-h-64 rounded-2xl bg-slate-900 p-6 text-white shadow-inner">
+                      <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-300">{form.heroEyebrow || "Your eyebrow"}</p>
+                      <h2 className="mt-5 text-3xl font-black leading-tight">{form.heroTitle || "Your main title"}</h2>
+                      <h3 className="text-3xl font-black leading-tight text-blue-300">{form.heroTitleAccent || "Your accent title"}</h3>
+                      <p className="mt-4 text-sm leading-6 text-slate-300">{form.heroDescription || "Your hero description will appear here."}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="payments" className="mt-5">
+              <div className="grid gap-5 lg:grid-cols-2">
+                <Card>
+                  <CardHeader className="border-b bg-gradient-to-r from-green-50 to-white">
+                    <CardTitle className="flex items-center gap-3"><span className="rounded-xl bg-green-100 p-2 text-green-700"><CreditCard className="h-5 w-5" /></span>UPI Payment</CardTitle>
+                    <p className="text-sm text-slate-500">Used to generate UPI payment links during checkout.</p>
+                  </CardHeader>
+                  <CardContent className="space-y-5 p-5 sm:p-6">
+                    <Field label="UPI ID" value={form.upiId} onChange={(value) => set("upiId", value)} placeholder="yourname@upi" />
+                    <Field label="UPI Payee Name" value={form.upiPayeeName} onChange={(value) => set("upiPayeeName", value)} />
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="border-b bg-gradient-to-r from-orange-50 to-white">
+                    <CardTitle className="flex items-center gap-3"><span className="rounded-xl bg-orange-100 p-2 text-orange-700"><Truck className="h-5 w-5" /></span>Shipping</CardTitle>
+                    <p className="text-sm text-slate-500">Set the order threshold and delivery charge shown to customers.</p>
+                  </CardHeader>
+                  <CardContent className="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
+                    <Field label="Free Shipping Above (₹)" type="number" value={String(form.freeShippingAbove)} onChange={(value) => set("freeShippingAbove", Number(value))} />
+                    <Field label="Shipping Fee (₹)" type="number" value={String(form.shippingFee)} onChange={(value) => set("shippingFee", Number(value))} />
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="featured" className="mt-5">
+              <Card>
+                <CardHeader className="border-b bg-gradient-to-r from-amber-50 to-white">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-3"><span className="rounded-xl bg-amber-100 p-2 text-amber-700"><Star className="h-5 w-5" /></span>Featured Products</CardTitle>
+                      <p className="mt-1 text-sm text-slate-500">Choose which products appear in Best Sellers and control their order.</p>
+                    </div>
+                    <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">{featured.length} selected</div>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-5 sm:p-6">
+                  {productsLoading ? <p className="text-sm text-slate-500">Loading products…</p> : products.length === 0 ? (
+                    <div className="rounded-xl border border-dashed p-8 text-center"><p className="font-semibold text-slate-700">No store products yet</p><p className="mt-1 text-sm text-slate-500">Add products from Manage Products first.</p></div>
+                  ) : (
+                    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                      {products.map((product: StoreProduct) => {
+                        const index = featured.indexOf(product.slug);
+                        const selected = index >= 0;
+                        return (
+                          <div key={product.id} className={`rounded-2xl border p-4 transition ${selected ? "border-blue-300 bg-blue-50/70 shadow-sm" : "border-slate-200 bg-white"}`}>
+                            <div className="flex items-center gap-3">
+                              <input type="checkbox" checked={selected} onChange={() => toggleFeatured(product.slug)} className="h-4 w-4 accent-blue-600" />
+                              <img src={product.imageUrl || getProductImage(product.slug)} alt="" className="h-16 w-16 rounded-xl bg-white object-contain p-1 shadow-sm" />
+                              <div className="min-w-0 flex-1">
+                                <p className="truncate font-bold text-slate-800">{product.name}</p>
+                                <p className="text-xs text-slate-500">{product.uom} · ₹{product.price.toFixed(2)}</p>
+                              </div>
+                            </div>
+                            {selected && (
+                              <div className="mt-4 flex items-center justify-between rounded-xl bg-white p-2">
+                                <span className="text-xs font-bold text-slate-500">Position #{index + 1}</span>
+                                <div className="flex gap-1">
+                                  <Button variant="ghost" size="icon" disabled={index === 0} onClick={() => setFeatured((current) => moveItem(current, index, -1))}><ArrowUp className="h-4 w-4" /></Button>
+                                  <Button variant="ghost" size="icon" disabled={index === featured.length - 1} onClick={() => setFeatured((current) => moveItem(current, index, 1))}><ArrowDown className="h-4 w-4" /></Button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="categories" className="mt-5">
+              <div className="space-y-5">
+                <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+                  <div><h2 className="text-xl font-black text-slate-900">Store Categories</h2><p className="text-sm text-slate-500">Build category cards, choose their images, set colors and assign products.</p></div>
+                  <Button onClick={addCategory} className="gap-2"><Plus className="h-4 w-4" /> Add Category</Button>
+                </div>
+
+                {categories.map((category, index) => (
+                  <Card key={category.id} className="overflow-hidden">
+                    <CardHeader className="border-b bg-slate-50">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3"><div className={`rounded-xl border p-2 ${themeClasses[category.theme]}`}><LayoutGrid className="h-5 w-5" /></div><div><CardTitle>Category {index + 1}</CardTitle><p className="text-xs text-slate-500">{category.productSlugs.length} products assigned</p></div></div>
+                        <div className="flex gap-1">
+                          <Button variant="ghost" size="icon" disabled={index === 0} onClick={() => setCategories((current) => moveItem(current, index, -1))}><ArrowUp className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="icon" disabled={index === categories.length - 1} onClick={() => setCategories((current) => moveItem(current, index, 1))}><ArrowDown className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="icon" onClick={() => setCategories((current) => current.filter((item) => item.id !== category.id))}><Trash2 className="h-4 w-4 text-red-500" /></Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-6 p-5 sm:p-6">
+                      <div className="grid gap-5 lg:grid-cols-[1fr_1fr_180px]">
+                        <Field label="Category Title" value={category.title} onChange={(value) => updateCategory(category.id, { title: value })} />
+                        <Field label="Subtitle" value={category.subtitle} onChange={(value) => updateCategory(category.id, { subtitle: value })} />
+                        <SelectField label="Theme" value={category.theme} onChange={(value) => updateCategory(category.id, { theme: value as StoreCategory["theme"] })} options={categoryThemes} optionLabels={themeLabels} />
+                      </div>
+
+                      <div className="grid gap-5 lg:grid-cols-[1fr_280px]">
+                        <SelectField label="Category Image" value={category.imageSlug} onChange={(value) => updateCategory(category.id, { imageSlug: value })} options={products.map((product) => product.slug)} optionLabels={Object.fromEntries(products.map((product) => [product.slug, product.name]))} />
+                        <div className={`flex items-center gap-3 rounded-2xl border p-3 ${themeClasses[category.theme]}`}>
+                          <img src={category.imageSlug ? (productBySlug.get(category.imageSlug)?.imageUrl || getProductImage(category.imageSlug)) : ""} alt="" className="h-16 w-16 rounded-xl bg-white object-contain p-1" />
+                          <div className="min-w-0"><p className="text-xs font-bold uppercase tracking-wide opacity-70">Preview</p><p className="truncate text-sm font-black">{category.title || "Category title"}</p><p className="truncate text-xs opacity-80">{category.subtitle || "Category subtitle"}</p></div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="mb-3 flex items-center justify-between"><Label>Products in this Category</Label><span className="text-xs font-bold text-slate-500">{category.productSlugs.length} selected</span></div>
+                        {products.length === 0 ? <p className="rounded-xl border border-dashed p-5 text-center text-sm text-slate-500">Add store products first.</p> : <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">{products.map((product) => { const selected = category.productSlugs.includes(product.slug); return <label key={product.id} className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition ${selected ? "border-blue-300 bg-blue-50" : "border-slate-200 bg-white hover:border-slate-300"}`}><input type="checkbox" checked={selected} onChange={() => toggleCategoryProduct(category.id, product.slug)} className="h-4 w-4 accent-blue-600" /><img src={product.imageUrl || getProductImage(product.slug)} alt="" className="h-11 w-11 rounded-lg bg-white object-contain p-1" /><span className="truncate text-sm font-semibold text-slate-700">{product.name}</span></label>; })}</div>}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="benefits" className="mt-5">
+              <Card>
+                <CardHeader className="border-b bg-gradient-to-r from-blue-50 to-white">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div><CardTitle className="flex items-center gap-3"><span className="rounded-xl bg-blue-100 p-2 text-blue-700"><Truck className="h-5 w-5" /></span>Benefits Strip</CardTitle><p className="mt-1 text-sm text-slate-500">These cards appear below the homepage hero.</p></div>
+                    <Button onClick={addBenefit} className="gap-2"><Plus className="h-4 w-4" /> Add Benefit</Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4 p-5 sm:p-6">
+                  {benefits.map((item, index) => {
+                    const Icon = iconForBenefit(item.icon);
+                    return <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                      <div className="flex flex-col gap-4 lg:flex-row lg:items-end">
+                        <div className="flex items-center gap-3 lg:w-44"><div className="rounded-xl bg-slate-100 p-3 text-slate-700"><Icon className="h-5 w-5" /></div><div className="flex-1"><SelectField label="Icon" value={item.icon} onChange={(value) => updateBenefit(item.id, { icon: value as StoreBenefit["icon"] })} options={benefitIcons} optionLabels={benefitIconLabels} /></div></div>
+                        <div className="flex-1"><Field label="Title" value={item.title} onChange={(value) => updateBenefit(item.id, { title: value })} /></div>
+                        <div className="flex-1"><Field label="Subtitle" value={item.subtitle} onChange={(value) => updateBenefit(item.id, { subtitle: value })} /></div>
+                        <div className="flex gap-1">
+                          <Button variant="ghost" size="icon" disabled={index === 0} onClick={() => setBenefits((current) => moveItem(current, index, -1)}><ArrowUp className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="icon" disabled={index === benefits.length - 1} onClick={() => setBenefits((current) => moveItem(current, index, 1))}><ArrowDown className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="icon" onClick={() => setBenefits((current) => current.filter((value) => value.id !== item.id))}><Trash2 className="h-4 w-4 text-red-500" /></Button>
+                        </div>
+                      </div>
+                    </div>;
+                  })}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="why" className="mt-5">
+              <Card>
+                <CardHeader className="border-b bg-gradient-to-r from-green-50 to-white">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div><CardTitle className="flex items-center gap-3"><span className="rounded-xl bg-green-100 p-2 text-green-700"><Check className="h-5 w-5" /></span>Why Choose Us</CardTitle><p className="mt-1 text-sm text-slate-500">Control the trust-building cards shown on the homepage.</p></div>
+                    <Button onClick={addWhyUs} className="gap-2"><Plus className="h-4 w-4" /> Add Reason</Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4 p-5 sm:p-6">
+                  {whyUs.map((item, index) => {
+                    const Icon = iconForWhy(item.icon);
+                    return <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                      <div className="grid gap-4 lg:grid-cols-[auto_1fr_1fr]">
+                        <div className={`flex h-16 w-16 items-center justify-center rounded-2xl border ${themeClasses[item.theme]}`}><Icon className="h-6 w-6" /></div>
+                        <div className="space-y-4">
+                          <div className="grid gap-4 sm:grid-cols-2"><SelectField label="Icon" value={item.icon} onChange={(value) => updateWhyUs(item.id, { icon: value as StoreWhyUs["icon"] })} options={whyIcons} optionLabels={whyIconLabels} /><SelectField label="Theme" value={item.theme} onChange={(value) => updateWhyUs(item.id, { theme: value as StoreWhyUs["theme"] })} options={whyThemes} optionLabels={themeLabels} /></div>
+                          <Field label="Title" value={item.title} onChange={(value) => updateWhyUs(item.id, { title: value })} />
+                        </div>
+                        <div className="space-y-4">
+                          <div className="space-y-2"><Label>Description</Label><Textarea value={item.description} onChange={(e) => updateWhyUs(item.id, { description: e.target.value })} className="min-h-24" /></div>
+                          <div className="flex justify-end gap-1"><Button variant="ghost" size="icon" disabled={index === 0} onClick={() => setWhyUs((current) => moveItem(current, index, -1))}><ArrowUp className="h-4 w-4" /></Button><Button variant="ghost" size="icon" disabled={index === whyUs.length - 1} onClick={() => setWhyUs((current) => moveItem(current, index, 1))}><ArrowDown className="h-4 w-4" /></Button><Button variant="ghost" size="icon" onClick={() => setWhyUs((current) => current.filter((value) => value.id !== item.id))}><Trash2 className="h-4 w-4 text-red-500" /></Button></div>
+                        </div>
+                      </div>
+                    </div>;
+                  })}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+
+          <div className="sticky bottom-4 z-20 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-xl backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+            <div><p className="font-bold text-slate-800">Ready to publish your changes?</p><p className="text-xs text-slate-500">Save once and the storefront will use the latest settings.</p></div>
+            <Button onClick={save} disabled={saveSettings.isPending} className="gap-2 bg-blue-600 px-6 hover:bg-blue-700"><Save className="h-4 w-4" />{saveSettings.isPending ? "Saving…" : "Save Store Changes"}</Button>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
 };
+
 export default Settings;
