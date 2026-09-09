@@ -37,6 +37,16 @@ export interface StoreSettings {
   heroTitle: string;
   heroTitleAccent: string;
   heroDescription: string;
+  heroImageUrl: string;
+  promoTitle: string;
+  promoDescription: string;
+  promoButtonText: string;
+  promoBannerImageUrl: string;
+  footerLogoUrl: string;
+  footerSubheading: string;
+  footerAddress: string;
+  footerShopping: string;
+  footerCopyright: string;
   featuredSlugs: string[];
   categories: StoreCategory[];
   benefits: StoreBenefit[];
@@ -58,6 +68,16 @@ export const DEFAULT_STORE_SETTINGS: StoreSettings = {
   heroTitle: "CLEAN HOME.",
   heroTitleAccent: "FRESH EVERY DAY.",
   heroDescription: "High quality cleaning & personal care products made for modern homes — effective, affordable and reliable.",
+  heroImageUrl: "/hero.png",
+  promoTitle: "Special Offers",
+  promoDescription: "Shop everyday essentials at great prices.",
+  promoButtonText: "Shop Products",
+  promoBannerImageUrl: "/promo-banner.png",
+  footerLogoUrl: "/Logo.png",
+  footerSubheading: "Quality cleaning & personal care products for modern homes.",
+  footerAddress: "FLAT NO - 202, RK RESIDENCY\nHARITHA ROYAL CITY COLONY\nRAVALKOLE, MEDCHAL - 501401",
+  footerShopping: "Products\nCategories\nCart\nContact",
+  footerCopyright: "© 2026 UltraShine. All rights reserved.",
   featuredSlugs: ["floor-cleaner", "dish-wash", "copper-cleaning-liquid", "hand-wash"],
   categories: [
     { title: "Household Cleaning", subtitle: "Floor Cleaner · Toilet Cleaner · Phenyl", imageSlug: "floor-cleaner", theme: "blue", productSlugs: ["floor-cleaner", "toilet-cleaner", "phenyl"] },
@@ -90,6 +110,10 @@ const mapSettings = (data: any): StoreSettings => {
     phone: typeof raw.phone === "string" && raw.phone.trim() ? raw.phone : DEFAULT_STORE_SETTINGS.phone,
     email: typeof raw.email === "string" && raw.email.trim() ? raw.email : DEFAULT_STORE_SETTINGS.email,
     address: typeof raw.address === "string" && raw.address.trim() ? raw.address : DEFAULT_STORE_SETTINGS.address,
+    footerAddress: typeof raw.footerAddress === "string" && raw.footerAddress.trim() ? raw.footerAddress : (typeof raw.address === "string" && raw.address.trim() ? raw.address : DEFAULT_STORE_SETTINGS.footerAddress),
+    heroImageUrl: typeof raw.heroImageUrl === "string" && raw.heroImageUrl.trim() ? raw.heroImageUrl : DEFAULT_STORE_SETTINGS.heroImageUrl,
+    promoBannerImageUrl: typeof raw.promoBannerImageUrl === "string" && raw.promoBannerImageUrl.trim() ? raw.promoBannerImageUrl : DEFAULT_STORE_SETTINGS.promoBannerImageUrl,
+    footerLogoUrl: typeof raw.footerLogoUrl === "string" && raw.footerLogoUrl.trim() ? raw.footerLogoUrl : DEFAULT_STORE_SETTINGS.footerLogoUrl,
     freeShippingAbove: Number(raw.freeShippingAbove ?? DEFAULT_STORE_SETTINGS.freeShippingAbove),
     shippingFee: Number(raw.shippingFee ?? DEFAULT_STORE_SETTINGS.shippingFee),
     featuredSlugs: Array.isArray(raw.featuredSlugs) ? raw.featuredSlugs : DEFAULT_STORE_SETTINGS.featuredSlugs,
@@ -103,12 +127,7 @@ export const useStoreSettings = () =>
   useQuery({
     queryKey: [SETTING_TYPE],
     queryFn: async (): Promise<StoreSettings> => {
-      const { data, error } = await supabase
-        .from("settings" as any)
-        .select("setting_data")
-        .eq("setting_type", SETTING_TYPE)
-        .is("user_id", null)
-        .maybeSingle();
+      const { data, error } = await supabase.from("settings" as any).select("setting_data").eq("setting_type", SETTING_TYPE).is("user_id", null).maybeSingle();
       if (error) throw error;
       return mapSettings(data);
     },
@@ -120,12 +139,7 @@ export const useSaveStoreSettings = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (settings: StoreSettings) => {
-      const { data: existing, error: readError } = await supabase
-        .from("settings" as any)
-        .select("id")
-        .eq("setting_type", SETTING_TYPE)
-        .is("user_id", null)
-        .maybeSingle();
+      const { data: existing, error: readError } = await supabase.from("settings" as any).select("id").eq("setting_type", SETTING_TYPE).is("user_id", null).maybeSingle();
       if (readError) throw readError;
       if (existing?.id) {
         const { error } = await supabase.from("settings" as any).update({ setting_data: settings }).eq("id", existing.id);
@@ -136,10 +150,7 @@ export const useSaveStoreSettings = () => {
       }
       return settings;
     },
-    onSuccess: (settings) => {
-      qc.setQueryData([SETTING_TYPE], settings);
-      qc.invalidateQueries({ queryKey: [SETTING_TYPE] });
-    },
+    onSuccess: (settings) => { qc.setQueryData([SETTING_TYPE], settings); qc.invalidateQueries({ queryKey: [SETTING_TYPE] }); },
   });
 };
 
