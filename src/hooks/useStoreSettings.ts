@@ -46,9 +46,9 @@ export interface StoreSettings {
 export const DEFAULT_STORE_SETTINGS: StoreSettings = {
   storeName: "UltraShine",
   businessName: "UltraShine",
-  phone: "",
-  email: "",
-  address: "",
+  phone: "+91 98500 60 6000\n+91 70755 65500",
+  email: "info@shinesparkle.com\nsupport@shinesparkle.com",
+  address: "FLAT NO - 202, RK RESIDENCY\nHARITHA ROYAL CITY COLONY\nRAVALKOLE, MEDCHAL - 501401",
   gstNumber: "",
   upiId: "urbanshine@upi",
   upiPayeeName: "UltraShine",
@@ -87,6 +87,9 @@ const mapSettings = (data: any): StoreSettings => {
   return {
     ...DEFAULT_STORE_SETTINGS,
     ...raw,
+    phone: typeof raw.phone === "string" && raw.phone.trim() ? raw.phone : DEFAULT_STORE_SETTINGS.phone,
+    email: typeof raw.email === "string" && raw.email.trim() ? raw.email : DEFAULT_STORE_SETTINGS.email,
+    address: typeof raw.address === "string" && raw.address.trim() ? raw.address : DEFAULT_STORE_SETTINGS.address,
     freeShippingAbove: Number(raw.freeShippingAbove ?? DEFAULT_STORE_SETTINGS.freeShippingAbove),
     shippingFee: Number(raw.shippingFee ?? DEFAULT_STORE_SETTINGS.shippingFee),
     featuredSlugs: Array.isArray(raw.featuredSlugs) ? raw.featuredSlugs : DEFAULT_STORE_SETTINGS.featuredSlugs,
@@ -109,6 +112,7 @@ export const useStoreSettings = () =>
       if (error) throw error;
       return mapSettings(data);
     },
+    initialData: DEFAULT_STORE_SETTINGS,
     staleTime: 60_000,
   });
 
