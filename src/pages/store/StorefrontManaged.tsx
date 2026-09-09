@@ -56,7 +56,7 @@ const StorefrontManaged = () => {
         </nav>
         <div className="ml-auto flex items-center gap-3">
           <div className="hidden h-10 w-[260px] items-center gap-2 rounded-full bg-[#f1f5f9] px-4 md:flex"><Search className="h-4 w-4 text-[#6d8299]" /><input value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => e.key === "Enter" && scrollToProducts()} placeholder="Search products..." className="w-full bg-transparent text-xs outline-none" /></div>
-          <button aria-label="Account" className="hidden h-10 w-10 items-center justify-center text-[#092f59] sm:flex"><UserRound className="h-5 w-5" /></button>
+          <button type="button" onClick={() => navigate("/login")} aria-label="Login" title="Login" className="flex h-10 w-10 items-center justify-center rounded-full text-[#092f59] transition hover:bg-slate-100"><UserRound className="h-5 w-5" /></button>
           <button onClick={() => navigate("/cart")} aria-label="Cart" className="relative flex h-10 w-10 items-center justify-center text-[#092f59]"><ShoppingCart className="h-5 w-5" />{count > 0 && <span className="absolute right-0 top-0 min-w-5 rounded-full bg-green-600 px-1.5 py-0.5 text-[10px] font-black text-white">{count}</span>}</button>
         </div>
       </div>
