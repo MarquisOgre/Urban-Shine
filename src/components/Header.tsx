@@ -10,8 +10,8 @@ const Header = () => {
   const handleLogout = async () => { await signOut(); navigate("/"); };
 
   const items = [
-    ["/invoice", "Invoice System"], ["/formulations", "Formulations"], ["/product-prices", "Product Prices"],
-    ["/store-products", "Store Products"], ["/packing-materials", "Packing Materials"], ["/chemical-prices", "Chemical Prices"], ["/indent-sheet", "Indent Sheet"],
+    ["/invoice", "Invoice"], ["/formulations", "Formulations"], ["/product-prices", "Products"],
+    ["/store-products", "Stores"], ["/packing-materials", "Packing"], ["/chemical-prices", "Chemical"], ["/indent-sheet", "Indent"],
   ];
 
   return (
