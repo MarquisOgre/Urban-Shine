@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Leaf, Search, ShoppingCart, ShieldCheck, Sparkles, Truck, UserRound } from "lucide-react";
+import { ArrowRight, Check, Leaf, Menu, Search, ShoppingCart, ShieldCheck, Sparkles, Truck, UserRound, X } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -21,6 +21,7 @@ const StorefrontManaged = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [showAllProducts, setShowAllProducts] = useState(false);
   const [search, setSearch] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   if (!settings) return <div className="min-h-screen flex items-center justify-center text-slate-500">Loading store…</div>;
 
@@ -31,9 +32,9 @@ const StorefrontManaged = () => {
   const visibleProducts = activeCategory && selectedCategory ? products.filter((p) => selectedCategory.productSlugs.includes(p.slug)) : showAllProducts ? products : featured;
   const displayProducts = filteredSearch ? products.filter((p) => `${p.name} ${p.tagline} ${p.category}`.toLowerCase().includes(filteredSearch)) : visibleProducts;
   const scrollToProducts = () => requestAnimationFrame(() => document.getElementById("products")?.scrollIntoView({ behavior: "smooth", block: "start" }));
-  const showAll = () => { setActiveCategory(null); setShowAllProducts(true); scrollToProducts(); };
+  const showAll = () => { setActiveCategory(null); setShowAllProducts(true); setMobileMenuOpen(false); scrollToProducts(); };
   const showFeatured = () => { setActiveCategory(null); setShowAllProducts(false); scrollToProducts(); };
-  const selectCategory = (title: string) => { setShowAllProducts(false); setActiveCategory((v) => v === title ? null : title); scrollToProducts(); };
+  const selectCategory = (title: string) => { setShowAllProducts(false); setActiveCategory((v) => v === title ? null : title); setMobileMenuOpen(false); scrollToProducts(); };
   const add = (product: (typeof products)[number]) => { addItem({ slug: product.slug, name: product.name, uom: product.uom, price: product.price }); toast.success(`${product.name} added to cart`); };
   const heroSrc = settings.heroImageUrl || heroImage;
   const promoSrc = settings.promoBannerImageUrl || promoBanner;
@@ -42,15 +43,44 @@ const StorefrontManaged = () => {
   const shoppingLink = (label: string) => {
     const key = label.toLowerCase();
     if (key.includes("product")) return <button onClick={showAll} className="text-left hover:text-white">{label}</button>;
-    if (key.includes("categor")) return <a href="#categories" className="hover:text-white">{label}</a>;
-    if (key.includes("cart")) return <button onClick={() => navigate("/cart")} className="text-left hover:text-white">{label}</button>;
-    if (key.includes("contact")) return <a href="#footer" className="hover:text-white">{label}</a>;
-    if (key.includes("about")) return <a href="#why-us" className="hover:text-white">{label}</a>;
+    if (key.includes("categor")) return <a href="#categories" onClick={() => setMobileMenuOpen(false)} className="hover:text-white">{label}</a>;
+    if (key.includes("cart")) return <button onClick={() => { setMobileMenuOpen(false); navigate("/cart"); }} className="text-left hover:text-white">{label}</button>;
+    if (key.includes("contact")) return <a href="#footer" onClick={() => setMobileMenuOpen(false)} className="hover:text-white">{label}</a>;
+    if (key.includes("about")) return <a href="#why-us" onClick={() => setMobileMenuOpen(false)} className="hover:text-white">{label}</a>;
     return <span>{label}</span>;
   };
 
   return <div className="min-h-screen bg-white text-slate-900">
-    <header className="sticky top-0 z-50 border-b border-slate-100 bg-white"><div className="relative mx-auto flex h-[68px] max-w-[1530px] items-center px-5 lg:px-10"><button className="lg:hidden" aria-label="Menu"><span className="text-xl">☰</span></button><a href="#home" className="flex shrink-0 items-center"><img src="/Logo.png" alt={settings.storeName} className="h-12 w-auto object-contain" /></a><nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-2 lg:flex"><a href="#home" className="rounded-full bg-[#edf5ff] px-5 py-2.5 text-sm font-black text-blue-700">Home</a><button onClick={showAll} className="rounded-full px-4 py-2.5 text-sm font-bold text-[#092f59]">Products</button><a href="#categories" className="rounded-full px-4 py-2.5 text-sm font-bold text-[#092f59]">Categories</a><a href="#why-us" className="rounded-full px-4 py-2.5 text-sm font-bold text-[#092f59]">About</a><a href="#footer" className="rounded-full px-4 py-2.5 text-sm font-bold text-[#092f59]">Contact</a></nav><div className="ml-auto flex items-center gap-3"><div className="hidden h-10 w-[260px] items-center gap-2 rounded-full bg-[#f1f5f9] px-4 md:flex"><Search className="h-4 w-4 text-[#6d8299]" /><input value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => e.key === "Enter" && scrollToProducts()} placeholder="Search products..." className="w-full bg-transparent text-xs outline-none" /></div><button type="button" onClick={() => navigate("/login")} aria-label="Login" title="Login" className="flex h-10 w-10 items-center justify-center rounded-full text-[#092f59] transition hover:bg-slate-100"><UserRound className="h-5 w-5" /></button><button onClick={() => navigate("/cart")} aria-label="Cart" className="relative flex h-10 w-10 items-center justify-center text-[#092f59]"><ShoppingCart className="h-5 w-5" />{count > 0 && <span className="absolute right-0 top-0 min-w-5 rounded-full bg-green-600 px-1.5 py-0.5 text-[10px] font-black text-white">{count}</span>}</button></div></div></header>
+    <header className="sticky top-0 z-50 border-b border-slate-100 bg-white">
+      <div className="relative mx-auto flex h-[68px] max-w-[1530px] items-center px-4 sm:px-5 lg:px-10">
+        <button type="button" onClick={() => setMobileMenuOpen(true)} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[#092f59] transition hover:bg-slate-100 lg:hidden" aria-label="Open menu" aria-expanded={mobileMenuOpen}>
+          <Menu className="h-7 w-7" />
+        </button>
+        <a href="#home" className="flex shrink-0 items-center"><img src="/Logo.png" alt={settings.storeName} className="h-12 w-auto object-contain" /></a>
+        <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-2 lg:flex"><a href="#home" className="rounded-full bg-[#edf5ff] px-5 py-2.5 text-sm font-black text-blue-700">Home</a><button onClick={showAll} className="rounded-full px-4 py-2.5 text-sm font-bold text-[#092f59]">Products</button><a href="#categories" className="rounded-full px-4 py-2.5 text-sm font-bold text-[#092f59]">Categories</a><a href="#why-us" className="rounded-full px-4 py-2.5 text-sm font-bold text-[#092f59]">About</a><a href="#footer" className="rounded-full px-4 py-2.5 text-sm font-bold text-[#092f59]">Contact</a></nav>
+        <div className="ml-auto flex items-center gap-1 sm:gap-3"><div className="hidden h-10 w-[260px] items-center gap-2 rounded-full bg-[#f1f5f9] px-4 md:flex"><Search className="h-4 w-4 text-[#6d8299]" /><input value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => e.key === "Enter" && scrollToProducts()} placeholder="Search products..." className="w-full bg-transparent text-xs outline-none" /></div><button type="button" onClick={() => navigate("/login")} aria-label="Login" title="Login" className="flex h-10 w-10 items-center justify-center rounded-full text-[#092f59] transition hover:bg-slate-100"><UserRound className="h-5 w-5" /></button><button onClick={() => navigate("/cart")} aria-label="Cart" className="relative flex h-10 w-10 items-center justify-center text-[#092f59]"><ShoppingCart className="h-5 w-5" />{count > 0 && <span className="absolute right-0 top-0 min-w-5 rounded-full bg-green-600 px-1.5 py-0.5 text-[10px] font-black text-white">{count}</span>}</button></div>
+      </div>
+
+      {mobileMenuOpen && <>
+        <button type="button" aria-label="Close menu overlay" onClick={() => setMobileMenuOpen(false)} className="fixed inset-0 top-[68px] z-[55] bg-slate-900/30 lg:hidden" />
+        <aside className="fixed right-0 top-0 z-[60] h-full w-[min(86vw,340px)] overflow-y-auto bg-white shadow-2xl lg:hidden" aria-label="Mobile navigation">
+          <div className="flex h-[68px] items-center justify-between border-b border-slate-100 px-5">
+            <div className="flex items-center gap-2"><img src="/Logo.png" alt={settings.storeName} className="h-9 w-auto object-contain" /><span className="font-black text-[#092f59]">Menu</span></div>
+            <button type="button" onClick={() => setMobileMenuOpen(false)} className="flex h-10 w-10 items-center justify-center rounded-full text-[#092f59] hover:bg-slate-100" aria-label="Close menu"><X className="h-6 w-6" /></button>
+          </div>
+          <nav className="flex flex-col p-4">
+            <a href="#home" onClick={() => setMobileMenuOpen(false)} className="rounded-xl px-4 py-3.5 text-base font-black text-[#092f59] hover:bg-[#edf5ff]">Home</a>
+            <button type="button" onClick={showAll} className="rounded-xl px-4 py-3.5 text-left text-base font-black text-[#092f59] hover:bg-[#edf5ff]">Products</button>
+            <a href="#categories" onClick={() => setMobileMenuOpen(false)} className="rounded-xl px-4 py-3.5 text-base font-black text-[#092f59] hover:bg-[#edf5ff]">Categories</a>
+            <a href="#why-us" onClick={() => setMobileMenuOpen(false)} className="rounded-xl px-4 py-3.5 text-base font-black text-[#092f59] hover:bg-[#edf5ff]">About</a>
+            <a href="#footer" onClick={() => setMobileMenuOpen(false)} className="rounded-xl px-4 py-3.5 text-base font-black text-[#092f59] hover:bg-[#edf5ff]">Contact</a>
+            <div className="my-3 border-t border-slate-100" />
+            <button type="button" onClick={() => { setMobileMenuOpen(false); navigate("/login"); }} className="flex items-center gap-3 rounded-xl px-4 py-3.5 text-left text-base font-bold text-[#092f59] hover:bg-slate-50"><UserRound className="h-5 w-5" />Login</button>
+            <button type="button" onClick={() => { setMobileMenuOpen(false); navigate("/cart"); }} className="flex items-center gap-3 rounded-xl px-4 py-3.5 text-left text-base font-bold text-[#092f59] hover:bg-slate-50"><ShoppingCart className="h-5 w-5" />Cart {count > 0 && <span className="rounded-full bg-green-600 px-2 py-0.5 text-xs font-black text-white">{count}</span>}</button>
+          </nav>
+        </aside>
+      </>}
+    </header>
 
     <main>
       <section id="home" className="relative isolate h-[500px] overflow-hidden bg-[#eaf7ff] sm:h-[520px] lg:h-[540px]"><img src={heroSrc} alt={`${settings.storeName} cleaning products`} className="absolute inset-0 z-0 h-full w-full object-cover object-right" /><div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-[57%] bg-gradient-to-r from-[#eaf7ff] via-[#eaf7ff]/96 via-[72%] to-transparent" /><div className="relative z-30 mx-auto h-full max-w-[1530px] px-5 lg:px-10"><div className="flex h-full max-w-[600px] flex-col justify-center"><p className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.24em] text-[#0b4b7f] sm:text-sm">{settings.heroEyebrow}</p><h1 className="text-5xl font-black leading-[0.95] tracking-[-0.05em] text-[#073f76] sm:text-6xl lg:text-[68px]">{settings.heroTitle}<br /><span className="text-green-600">{settings.heroTitleAccent}</span></h1><p className="mt-5 max-w-[520px] text-sm font-medium leading-6 text-[#3f5872] sm:text-base">{settings.heroDescription}</p><div className="mt-7 flex flex-wrap gap-3"><button onClick={showAll} className="inline-flex h-12 items-center gap-2 rounded-lg bg-[#073f76] px-7 text-sm font-black text-white shadow-lg transition hover:-translate-y-0.5">Shop Products <ArrowRight className="h-4 w-4" /></button><a href="#categories" className="inline-flex h-12 items-center rounded-lg border-2 border-[#073f76] bg-white px-7 text-sm font-black text-[#073f76] shadow-lg">Explore Categories</a></div></div></div></section>
