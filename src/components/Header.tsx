@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { LogOut, Settings, Package } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 import MobileNav from "./MobileNav";
 
 const Header = () => {
@@ -48,7 +48,9 @@ const Header = () => {
                 <LogOut className="h-4 w-4 mr-1" /> Logout
               </Button>
             </div>
-            <MobileNav />
+            <div className="justify-self-end md:hidden">
+              <MobileNav />
+            </div>
           </> : (
             <Link to="/" className="justify-self-end whitespace-nowrap bg-white text-blue-600 font-semibold py-2 px-3 sm:px-4 rounded-lg shadow hover:bg-blue-100 transition-colors text-xs sm:text-sm">
               Back to Store
