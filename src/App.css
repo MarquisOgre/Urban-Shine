@@ -40,3 +40,12 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Store header: keep Basket before Profile on desktop and mobile. */
+header button[aria-label="Cart"] {
+  order: 1;
+}
+
+header button[aria-label="Login"] {
+  order: 2;
+}
